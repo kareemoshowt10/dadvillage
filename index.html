@@ -4,6 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dad Village</title>
+    <meta name="description" content="Dad Village helps dads build a science-backed daily routine for kids 0-3 — a Montessori-aligned curriculum and drag-and-drop scheduler built around executive-function development.">
+    <meta property="og:title" content="Dad Village">
+    <meta property="og:description" content="Small daily decisions, compounded — a science-backed routine builder for dads raising kids 0-3.">
+    <meta property="og:type" content="website">
+    <meta name="theme-color" content="#ff9500">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8F%A1%3C/text%3E%3C/svg%3E">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <!-- Dad Village curriculum data (loaded as globals: window.DV_TAXONOMY, window.DV_LESSON_PLANS) -->
     <script src="curriculum/taxonomy.js"></script>
@@ -2096,11 +2102,12 @@
                 const firstKid = dvOnbDraft.children[0];
                 const band = DV_ONBOARD_AGE_OPTIONS.find(o => o.id === firstKid.ageBand);
                 const kidLabel = firstKid.name ? firstKid.name : (band ? band.label : 'your child');
+                const kidPossessive = firstKid.name ? `${firstKid.name}'s` : "your child's";
                 body = `
                     <div class="dv-onb-hero">
                         <div class="dv-onb-mark dv-onb-mark-green"><i class="fa-solid fa-check"></i></div>
                         <div class="dv-onb-eyebrow" style="color:#047857;">YOU'RE SET</div>
-                        <h2 class="dv-onb-title">Let's build ${kidLabel}'s day</h2>
+                        <h2 class="dv-onb-title">Let's build ${kidPossessive} day</h2>
                         <p class="dv-onb-text">${band && band.ready ? `We have a full week-one curriculum ready for ${kidLabel}.` : `We're expanding the ${band ? band.label : ''} curriculum — meanwhile you'll have the full library and scheduler.`} Start on the dashboard, then open Plan to build today.</p>
                     </div>`;
             }

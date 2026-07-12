@@ -6,10 +6,10 @@ Science-backed daily-content platform for dads. Thesis: **small daily decisions 
 ```bash
 node serve.js     # serves on http://localhost:3012
 ```
-Open `kreme-of-the-crop-scheduler.html`. (Don't open via `file://` — the `curriculum/*.js` files need a server.)
+Open `index.html`. (Don't open via `file://` — the `curriculum/*.js` files need a server.)
 
 ## Structure
-- `kreme-of-the-crop-scheduler.html` — the app (single file, local-first, no backend).
+- `index.html` — the app (single file, local-first, no backend).
 - `curriculum/` — taxonomy, the 6 Compounding Pillars, and lesson plans for 0–12mo, 12–24mo, 2–3y (84 science-backed lessons).
 - `serve.js` — tiny static server for local dev.
 - `FRAMEWORK.md` — living design doc.
