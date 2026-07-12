@@ -6,12 +6,15 @@ Science-backed daily-content platform for dads. Thesis: **small daily decisions 
 ```bash
 node serve.js     # serves on http://localhost:3012
 ```
-Open `index.html`. (Don't open via `file://` — the `curriculum/*.js` files need a server.)
+Visit `/` for the marketing site or `/app` for the planner. (Don't open via `file://` — the `curriculum/*.js` files need a server.)
 
 ## Structure
-- `index.html` — the app (single file, local-first, no backend).
+- `index.html` — marketing/content site landing page (SEO/AEO).
+- `guides/` — age-band guide pages (`0-12-months`, `12-24-months`, `2-3-years`) and `why-repetition-works.html` at the root.
+- `app.html` — the app itself (single file, local-first, no backend), served at `/app`.
 - `curriculum/` — taxonomy, the 6 Compounding Pillars, and lesson plans for 0–12mo, 12–24mo, 2–3y (84 science-backed lessons).
-- `serve.js` — tiny static server for local dev.
+- `serve.js` — tiny static server for local dev (mirrors Vercel's `cleanUrls`).
+- `robots.txt`, `sitemap.xml`, `llms.txt` — technical SEO/AEO.
 - `FRAMEWORK.md` — living design doc.
 
 ## Features

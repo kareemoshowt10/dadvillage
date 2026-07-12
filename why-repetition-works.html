@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Why Toddlers Want to Rewatch the Same Video (And Why That's Good)</title>
+    <meta name="description" content="Why young kids beg to rewatch the same video or reread the same book — and how Dad Village's spaced-repetition engine schedules deliberate repeats at 1, 2, 4, 7, 14, and 30-day intervals to build real recall.">
+    <link rel="canonical" href="https://dadvillage.vercel.app/why-repetition-works">
+    <meta property="og:title" content="Why Toddlers Want to Rewatch the Same Video (And Why That's Good)">
+    <meta property="og:description" content="Repetition isn't boredom to a toddler's brain — it's how recall gets built. Here's the science, and how Dad Village schedules it on purpose.">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://dadvillage.vercel.app/why-repetition-works">
+    <meta property="og:image" content="https://dadvillage.vercel.app/og.png">
+    <meta property="og:site_name" content="Dad Village">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="theme-color" content="#ff9500">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8F%A1%3C/text%3E%3C/svg%3E">
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": "Why Toddlers Want to Rewatch the Same Video (And Why That's Good)",
+      "description": "Why young kids beg to rewatch the same video or reread the same book — and how Dad Village's spaced-repetition engine schedules deliberate repeats at 1, 2, 4, 7, 14, and 30-day intervals to build real recall.",
+      "author": { "@type": "Organization", "name": "Dad Village" },
+      "publisher": { "@type": "Organization", "name": "Dad Village", "logo": { "@type": "ImageObject", "url": "https://dadvillage.vercel.app/og.png" } },
+      "mainEntityOfPage": "https://dadvillage.vercel.app/why-repetition-works",
+      "datePublished": "2026-07-12"
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Why does my toddler want to watch the same video over and over?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Repetition isn't boredom to a young child's brain — it's mastery. Each rewatch, a toddler can predict more of what's coming, which frees up cognitive resources to notice a new word, gesture, or detail they missed before. What looks to an adult like a rut is, developmentally, the mechanism by which recall and vocabulary actually consolidate." }
+        },
+        {
+          "@type": "Question",
+          "name": "Is it bad to let a kid rewatch the same show constantly?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Not inherently — the concern is usually about total screen time or content quality, not repetition itself. Rewatching a specific, developmentally appropriate video is how young children build recall, similar to why they demand the same bedtime book night after night. The content and total duration matter far more than whether it repeats." }
+        },
+        {
+          "@type": "Question",
+          "name": "What is spaced repetition and does it work for toddlers?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Spaced repetition is revisiting the same material at expanding intervals (for example, after 1 day, then 2, then 4, then a week, then two weeks) rather than cramming it repeatedly in a single sitting or abandoning it after one exposure. It's well established in adult learning research, and Dad Village applies the same expanding-interval logic to toddler lessons and videos, scheduling a rewatch right as retention would otherwise start to fade." }
+        },
+        {
+          "@type": "Question",
+          "name": "How does Dad Village decide when to repeat a lesson?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Dad Village's recall engine tracks when a lesson or video was last completed and re-surfaces it at expanding intervals — 1, 2, 4, 7, 14, and then every 30 days — automatically adding it back into the day's plan when it's due, and flagging it with a visible 'On purpose' note so a parent knows the repeat is intentional, not a lack of new content." }
+        }
+      ]
+    }
+  ]
+}
+    </script>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        :root { --accent: #ff9500; --accent-deep: #e05e00; --ink: #1d1d1f; --muted: #6e6e73; --faint: #a1a1a6; --card: #f5f5f7; --line: #e8e8ed; --warm: #fff7ec; --warm-line: #ffe3bd; --recall: #ede9fe; --recall-ink: #6d28d9; }
+        html { scroll-behavior: smooth; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, sans-serif; -webkit-font-smoothing: antialiased; color: var(--ink); background: #fff; line-height: 1.6; font-size: 17px; }
+        a { color: var(--accent-deep); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        :focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+        .container { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+        .prose { max-width: 740px; margin: 0 auto; padding: 0 24px; }
+        .site-header { position: sticky; top: 0; z-index: 50; background: rgba(255,255,255,0.85); backdrop-filter: saturate(180%) blur(16px); -webkit-backdrop-filter: saturate(180%) blur(16px); border-bottom: 1px solid var(--line); }
+        .site-header .container { display: flex; align-items: center; gap: 20px; height: 60px; }
+        .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 17px; color: var(--ink); }
+        .brand:hover { text-decoration: none; }
+        .brand-mark { width: 30px; height: 30px; border-radius: 8px; flex: none; background: linear-gradient(135deg, #ff9500, #ff5e3a); display: inline-flex; align-items: center; justify-content: center; color: #fff; font-size: 14px; }
+        .site-nav { display: flex; align-items: center; gap: 4px; margin-left: auto; flex-wrap: wrap; }
+        .site-nav a { color: var(--muted); font-size: 14px; font-weight: 500; padding: 6px 10px; border-radius: 999px; }
+        .site-nav a:hover { color: var(--ink); background: var(--card); text-decoration: none; }
+        .site-nav a[aria-current="page"] { color: var(--ink); font-weight: 600; }
+        .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 20px; border-radius: 999px; font-size: 15px; font-weight: 600; border: 1px solid var(--line); color: var(--ink); background: #fff; cursor: pointer; }
+        .btn-primary { background: var(--ink); color: #fff; border-color: var(--ink); }
+        .site-nav .btn { padding: 8px 16px; font-size: 14px; }
+        .crumbs { font-size: 13px; color: var(--faint); padding: 20px 0 0; }
+        .crumbs a { color: var(--muted); }
+        .hero { padding: 20px 0 40px; }
+        .eyebrow { font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent-deep); }
+        h1 { font-size: clamp(30px, 5vw, 44px); line-height: 1.12; letter-spacing: -0.02em; font-weight: 800; margin: 14px 0 16px; }
+        .lede { font-size: 20px; color: var(--muted); line-height: 1.55; }
+        section { padding: 36px 0; }
+        h2 { font-size: clamp(22px, 3.5vw, 28px); line-height: 1.2; letter-spacing: -0.015em; font-weight: 700; margin: 0 0 14px; }
+        h3 { font-size: 18px; font-weight: 700; margin: 0 0 8px; }
+        .prose p, .prose ul, .prose ol { margin: 0 0 16px; color: #333336; }
+        .prose ul, .prose ol { padding-left: 22px; }
+        .prose li { margin-bottom: 6px; }
+        .tldr { background: var(--warm); border: 1px solid var(--warm-line); border-radius: 16px; padding: 20px 22px; margin: 28px 0; }
+        .tldr .eyebrow { display: block; margin-bottom: 8px; }
+        .tldr ul { margin: 0; padding-left: 20px; }
+        .tldr li { margin-bottom: 6px; }
+        .interval-row { display: flex; align-items: center; gap: 14px; margin: 24px 0; flex-wrap: wrap; }
+        .interval-step { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+        .interval-badge { width: 52px; height: 52px; border-radius: 50%; background: var(--recall); color: var(--recall-ink); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; }
+        .interval-label { font-size: 12px; color: var(--muted); }
+        .interval-arrow { color: var(--faint); font-size: 18px; }
+        .lesson { border: 1px solid var(--line); border-radius: 16px; padding: 20px 22px; margin: 14px 0; }
+        .pill { display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 3px 10px; border-radius: 999px; background: var(--recall); color: var(--recall-ink); }
+        .cite { display: block; margin-top: 10px; font-size: 13px; color: var(--faint); }
+        .cite b { color: var(--muted); font-weight: 600; }
+        .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin: 24px 0; }
+        .card { background: var(--card); border-radius: 16px; padding: 18px; }
+        .card h3 { margin: 0 0 6px; font-size: 16px; }
+        .card p { font-size: 14px; color: var(--muted); margin: 0; }
+        .faq details { border-bottom: 1px solid var(--line); padding: 4px 0; }
+        .faq summary { cursor: pointer; font-weight: 600; font-size: 17px; padding: 14px 0; list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+        .faq summary::-webkit-details-marker { display: none; }
+        .faq summary::after { content: "+"; font-size: 20px; color: var(--faint); flex: none; }
+        .faq details[open] summary::after { content: "\2013"; }
+        .faq .answer { padding: 0 0 16px; color: #333336; }
+        .cta-band { background: var(--ink); color: #fff; border-radius: 24px; padding: 40px 32px; text-align: center; margin: 24px auto; max-width: 740px; }
+        .cta-band h2 { color: #fff; }
+        .cta-band p { color: rgba(255,255,255,0.75); max-width: 520px; margin: 0 auto 20px; }
+        .site-footer { border-top: 1px solid var(--line); margin-top: 56px; padding: 40px 0 56px; }
+        .site-footer .container { display: flex; flex-wrap: wrap; gap: 28px; justify-content: space-between; }
+        .site-footer .thesis { max-width: 380px; font-size: 14px; color: var(--muted); }
+        .site-footer nav { display: flex; flex-direction: column; gap: 8px; font-size: 14px; }
+        .site-footer nav strong { font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--faint); margin-bottom: 4px; }
+        .site-footer a { color: var(--muted); }
+        .site-footer .fine { width: 100%; margin-top: 8px; font-size: 12px; color: var(--faint); }
+        @media (max-width: 720px) { section { padding: 28px 0; } .site-header .container { height: auto; padding-top: 10px; padding-bottom: 10px; flex-wrap: wrap; } .site-nav { margin-left: 0; width: 100%; } }
+    </style>
+</head>
+<body>
+    <header class="site-header">
+        <div class="container">
+            <a class="brand" href="/"><span class="brand-mark">&#9660;</span> Dad Village</a>
+            <nav class="site-nav" aria-label="Main">
+                <a href="/guides/0-12-months">0&ndash;12 mo</a>
+                <a href="/guides/12-24-months">12&ndash;24 mo</a>
+                <a href="/guides/2-3-years">2&ndash;3 yrs</a>
+                <a href="/why-repetition-works" aria-current="page">Why repetition</a>
+                <a class="btn btn-primary" href="/app">Open the app</a>
+            </nav>
+        </div>
+    </header>
+
+    <main id="main">
+        <div class="prose crumbs"><a href="/">Dad Village</a> / <span>Why repetition works</span></div>
+
+        <div class="prose hero">
+            <span class="eyebrow">The science</span>
+            <h1>Why your toddler wants the same video for the 40th time</h1>
+            <p class="lede">It looks like a rut. To a young child's brain, it's mastery in progress &mdash; and Dad Village schedules it on purpose.</p>
+        </div>
+
+        <div class="prose">
+            <div class="tldr">
+                <span class="eyebrow">TL;DR</span>
+                <ul>
+                    <li>Repetition isn't boredom to a toddler &mdash; each rewatch frees up mental bandwidth to notice something new, because the plot is no longer a mystery.</li>
+                    <li><strong>Spaced repetition</strong> &mdash; revisiting material at expanding gaps instead of cramming or abandoning it &mdash; is one of the best-evidenced techniques in learning science.</li>
+                    <li>Dad Village's recall engine re-surfaces key lessons and videos at <strong>1, 2, 4, 7, 14, and 30-day intervals</strong>, right as retention would otherwise start to fade.</li>
+                    <li>Every scheduled repeat is labeled <strong>"On purpose"</strong> in the app, so a dad never wonders if the content ran out.</li>
+                </ul>
+            </div>
+
+            <h2>What's actually happening when a kid demands a rewatch</h2>
+            <p>Every parent has lived this: the same 10-minute video, the same board book, the same verse of the same song, requested with total sincerity for the fortieth time. It reads as a lack of imagination. Developmentally, it's closer to the opposite.</p>
+            <p>The first time a toddler watches or hears something, most of their attention goes to just following it &mdash; who's talking, what's happening next, what that new word even means. By the fifth or fifteenth repeat, the plot is no longer a mystery. That frees up cognitive resources to notice a gesture they missed, predict the next line before it's said, or finally attempt the word themselves. The rewatch isn't standing still &mdash; it's where the actual learning happens.</p>
+            <p>This is also why toddlers who are read the same book by a parent build vocabulary faster than ones offered a rotating shelf of novelty: re-reading the same story lets a child fill in words from memory, which is retrieval practice, one of the most effective learning mechanisms there is.</p>
+
+            <h2>Spaced repetition: the same idea, deliberately timed</h2>
+            <p>Spaced repetition is a well-evidenced technique from learning science: instead of repeating something over and over in one sitting (which fades fast) or only once and never again (which fades even faster), you revisit it right as it's starting to be forgotten &mdash; at gradually expanding intervals. Each successful recall pushes the next needed review further out.</p>
+            <div class="interval-row">
+                <div class="interval-step"><div class="interval-badge">Day 1</div><div class="interval-label">First revisit</div></div>
+                <span class="interval-arrow">&rarr;</span>
+                <div class="interval-step"><div class="interval-badge">Day 2</div><div class="interval-label">Second</div></div>
+                <span class="interval-arrow">&rarr;</span>
+                <div class="interval-step"><div class="interval-badge">Day 4</div><div class="interval-label">Third</div></div>
+                <span class="interval-arrow">&rarr;</span>
+                <div class="interval-step"><div class="interval-badge">Day 7</div><div class="interval-label">Fourth</div></div>
+                <span class="interval-arrow">&rarr;</span>
+                <div class="interval-step"><div class="interval-badge">Day 14</div><div class="interval-label">Fifth</div></div>
+                <span class="interval-arrow">&rarr;</span>
+                <div class="interval-step"><div class="interval-badge">Day 30</div><div class="interval-label">Ongoing</div></div>
+            </div>
+            <p>Dad Village applies exactly this expanding-interval logic to toddler content. When your child completes a recall-worthy lesson or video, the app logs it. As soon as the next interval is due, that lesson is automatically re-surfaced into the day's plan &mdash; you don't have to remember what needs a refresh, or when.</p>
+
+            <h2>How it actually shows up in the app</h2>
+            <div class="lesson">
+                <div class="lesson-head" style="display:flex; align-items:baseline; gap:10px; flex-wrap:wrap; margin-bottom:8px;">
+                    <h3 style="margin:0;">Morning greeting + first signs</h3>
+                    <span class="pill">&#8635; Recall</span>
+                </div>
+                <p class="why" style="margin:0 0 8px;"><strong>On purpose.</strong> This repeats from earlier in the week &mdash; spaced revisits are how recall is built, not boredom.</p>
+                <p style="margin:0; font-size:14px; color:var(--muted);">This is the exact note a dad sees on a repeating lesson card in the app &mdash; so the repeat reads as a feature, not a glitch.</p>
+            </div>
+
+            <p>The recall engine doesn't just repeat everything &mdash; specific videos and lessons are flagged as "recall-worthy" (typically screen-based content and anchor lessons), and the schedule tracks how many times a child has viewed each one to compute the right next interval. A first rewatch comes back the next day; by the sixth or later rewatch, it's spaced a full month out, because retention at that point is durable.</p>
+
+            <h2>Curated series built with repetition in mind</h2>
+            <p>Dad Village's video library leans on creators whose format is already built around repetition &mdash; short, structured episodes designed to be rewatched, not one-off entertainment:</p>
+            <div class="card-grid">
+                <div class="card"><h3>Ms. Rachel</h3><p>Slow, repeated first words with mouth-modeling &mdash; built for exactly this kind of revisit.</p></div>
+                <div class="card"><h3>Super Simple Songs</h3><p>Predictable, sung structure that rewards repeat viewing with recall, not fatigue.</p></div>
+                <div class="card"><h3>Gracie's Corner</h3><p>High-energy counting and language content kids re-request by name.</p></div>
+                <div class="card"><h3>Jack Hartmann</h3><p>Movement paired with number and letter recall &mdash; repetition reinforces both at once.</p></div>
+                <div class="card"><h3>Cosmic Kids Yoga</h3><p>Movement inside a calm, repeatable story structure &mdash; supports regulation as much as recall.</p></div>
+            </div>
+
+            <h2>The takeaway for a busy dad</h2>
+            <p>You don't need to feel guilty about the fortieth rewatch, and you don't need to manually track which lesson from three weeks ago is "due" again. That's the job the recall engine does quietly in the background &mdash; the same content, resurfacing right when it'll do the most good, clearly labeled so you know it's intentional.</p>
+        </div>
+
+        <div class="prose">
+            <div class="cta-band">
+                <h2>Let the app remember what's due</h2>
+                <p>Free, no account needed. The recall engine runs automatically once you start building days.</p>
+                <a class="btn btn-primary" style="background:#fff; color:var(--ink);" href="/app">Open the free planner &rarr;</a>
+            </div>
+        </div>
+
+        <div class="prose">
+            <h2>Frequently asked</h2>
+            <div class="faq">
+                <details open>
+                    <summary>Why does my toddler want to watch the same video over and over?</summary>
+                    <div class="answer">Repetition isn't boredom to a young child's brain &mdash; it's mastery. Each rewatch, a toddler can predict more of what's coming, which frees up cognitive resources to notice a new word, gesture, or detail they missed before. What looks to an adult like a rut is, developmentally, the mechanism by which recall and vocabulary actually consolidate.</div>
+                </details>
+                <details>
+                    <summary>Is it bad to let a kid rewatch the same show constantly?</summary>
+                    <div class="answer">Not inherently &mdash; the concern is usually about total screen time or content quality, not repetition itself. Rewatching a specific, developmentally appropriate video is how young children build recall, similar to why they demand the same bedtime book night after night. The content and total duration matter far more than whether it repeats.</div>
+                </details>
+                <details>
+                    <summary>What is spaced repetition and does it work for toddlers?</summary>
+                    <div class="answer">Spaced repetition is revisiting the same material at expanding intervals (for example, after 1 day, then 2, then 4, then a week, then two weeks) rather than cramming it repeatedly in a single sitting or abandoning it after one exposure. It's well established in adult learning research, and Dad Village applies the same expanding-interval logic to toddler lessons and videos, scheduling a rewatch right as retention would otherwise start to fade.</div>
+                </details>
+                <details>
+                    <summary>How does Dad Village decide when to repeat a lesson?</summary>
+                    <div class="answer">Dad Village's recall engine tracks when a lesson or video was last completed and re-surfaces it at expanding intervals &mdash; 1, 2, 4, 7, 14, and then every 30 days &mdash; automatically adding it back into the day's plan when it's due, and flagging it with a visible "On purpose" note so a parent knows the repeat is intentional, not a lack of new content.</div>
+                </details>
+            </div>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <div class="thesis">
+                <a class="brand" href="/"><span class="brand-mark">&#9660;</span> Dad Village</a>
+                <p style="margin-top:12px;">Generational wealth isn't handed down &mdash; it's built, one small decision at a time.</p>
+            </div>
+            <nav aria-label="Guides"><strong>Guides</strong>
+                <a href="/guides/0-12-months">0&ndash;12 months</a>
+                <a href="/guides/12-24-months">12&ndash;24 months</a>
+                <a href="/guides/2-3-years">2&ndash;3 years</a>
+                <a href="/why-repetition-works">Why repetition works</a>
+            </nav>
+            <nav aria-label="App"><strong>App</strong><a href="/app">Open the planner</a><a href="/">About Dad Village</a></nav>
+            <p class="fine">Free &middot; Private by design &middot; Not medical advice &mdash; for concerns about your child's development, talk to your pediatrician.</p>
+        </div>
+    </footer>
+</body>
+</html>

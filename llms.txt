@@ -1,0 +1,19 @@
+# Dad Village
+
+> Dad Village is a free, science-backed daily routine builder for dads raising kids ages 0–3. It turns 84 research-cited lessons into a drag-and-drop daily plan built around six executive-function skills ("Compounding Pillars"): Focus, Impulse Control, Working Memory, Flexibility, Self-Regulation, and Delayed Gratification. Its core thesis: generational wealth is built through small daily decisions that compound a child's executive function — character IS the wealth. Dad Village does not shame screen time; it curates it, and repeats key content on purpose using spaced repetition (1, 2, 4, 7, 14, and 30-day revisit intervals) because spaced revisits are how young children build recall.
+
+## Core pages
+
+- [Dad Village home](https://dadvillage.vercel.app/): what Dad Village is, how the daily loop works (Build → Do → Reflect → Compound), and the six Compounding Pillars.
+- [The app](https://dadvillage.vercel.app/app): the free planner. Local-first — data stays on the user's device, no account required.
+- [0–12 months guide](https://dadvillage.vercel.app/guides/0-12-months): screen-free by design (following AAP guidance for under 18 months); bonding, tummy time, narration, and sensory lessons with citations.
+- [12–24 months guide](https://dadvillage.vercel.app/guides/12-24-months): first words, co-viewing rules, vetted video content (Ms. Rachel-tier), and daily activities with citations.
+- [2–3 years guide](https://dadvillage.vercel.app/guides/2-3-years): the language explosion, executive-function activities, and a science-backed sample week.
+- [Why repetition works](https://dadvillage.vercel.app/why-repetition-works): why toddlers re-watch the same video, and why Dad Village repeats lessons on purpose (spaced repetition for early recall).
+
+## Key facts
+
+- Free to use; no account, no ads; data is stored locally on the device (private by design).
+- 84 lessons across three age bands (0–12 months, 12–24 months, 2–3 years), each with plain-English science notes, a citation, and a no-screen alternative.
+- Built for busy dads: a full day can be planned in one tap ("Build my day").
+- Video content is curated (Ms. Rachel, Super Simple Songs, Gracie's Corner, Jack Hartmann, Cosmic Kids Yoga) and scheduled with co-viewing guidance rather than treated as forbidden.

@@ -21,8 +21,10 @@ const MIME = {
 http.createServer((req, res) => {
   let urlPath = decodeURIComponent(req.url.split('?')[0]);
   if (urlPath === '/') urlPath = '/index.html';
-  const filePath = path.join(ROOT, urlPath);
+  let filePath = path.join(ROOT, urlPath);
   if (!filePath.startsWith(ROOT)) { res.writeHead(403); return res.end('Forbidden'); }
+  // Clean URLs (mirrors vercel.json "cleanUrls"): /app -> app.html, /guides/x -> guides/x.html
+  if (!path.extname(filePath) && fs.existsSync(filePath + '.html')) filePath += '.html';
   fs.readFile(filePath, (err, data) => {
     if (err) { res.writeHead(404); return res.end('Not found: ' + urlPath); }
     const ext = path.extname(filePath).toLowerCase();
