@@ -697,31 +697,34 @@
                 .dv-source-container #curriculum-shelf { grid-template-columns: repeat(2, 1fr) !important; }
             }
 
-            /* Schedule grouped into 4 day-periods — calm, low-scroll, drag-friendly */
-            #dv-schedule-host { display: flex; flex-direction: column; gap: 10px; }
-            .dv-period { border: 1px solid #ececf0; border-radius: 16px; padding: 10px 12px 12px; background: #fff; transition: border-color 0.15s, box-shadow 0.15s, background 0.15s; }
-            .dv-period.dv-now { border-color: #fed7aa; background: linear-gradient(180deg, #fffaf3, #fff); }
-            .dv-period.drag-over { border-color: #ff9500; box-shadow: 0 0 0 3px rgba(255,149,0,0.15); background: #fffaf3; }
-            .dv-period-head { display: flex; align-items: center; gap: 9px; margin-bottom: 8px; }
-            .dv-period-icon { width: 28px; height: 28px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 13px; background: #f5f5f7; color: #86868b; flex-shrink: 0; }
-            .dv-period.dv-now .dv-period-icon { background: #fff1e0; color: #ff9500; }
-            .dv-period-label { font-size: 13px; font-weight: 700; letter-spacing: -0.01em; }
-            .dv-period-sub { font-size: 10px; color: #b0b0b8; font-weight: 500; }
-            .dv-period-now-dot { margin-left: 6px; width: 6px; height: 6px; border-radius: 50%; background: #ff9500; animation: dv-pulse 2s ease-in-out infinite; }
+            /* Full-day hourly timeline — every hour shown, even empty ones, grouped under period dividers */
+            #dv-schedule-host { display: flex; flex-direction: column; gap: 1px; }
+            .dv-period-divider { display: flex; align-items: center; gap: 8px; padding: 16px 4px 6px; }
+            .dv-period-divider:first-child { padding-top: 2px; }
+            .dv-period-divider-icon { width: 22px; height: 22px; border-radius: 7px; display: flex; align-items: center; justify-content: center; font-size: 10px; background: #f5f5f7; color: #86868b; flex-shrink: 0; }
+            .dv-period-divider-label { font-size: 11px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: #1d1d1f; }
+            .dv-period-divider-sub { font-size: 10px; color: #b0b0b8; font-weight: 500; }
+            .dv-hour-row { display: flex; align-items: flex-start; gap: 10px; padding: 4px 4px; border-radius: 12px; border: 1px solid transparent; transition: border-color 0.15s, box-shadow 0.15s, background 0.15s; }
+            .dv-hour-row.dv-now { border-color: #fed7aa; background: linear-gradient(180deg, #fffaf3, #fff); }
+            .dv-hour-row.drag-over { border-color: #ff9500; box-shadow: 0 0 0 3px rgba(255,149,0,0.15); background: #fffaf3; }
+            .dv-hour-time { width: 44px; flex-shrink: 0; font-size: 10px; font-weight: 700; color: #c7c7cc; padding-top: 8px; display: flex; align-items: center; gap: 4px; }
+            .dv-hour-row.has-blocks .dv-hour-time { color: #86868b; }
+            .dv-hour-row.dv-now .dv-hour-time { color: #ff9500; }
+            .dv-period-now-dot { margin-left: 0; width: 6px; height: 6px; border-radius: 50%; background: #ff9500; animation: dv-pulse 2s ease-in-out infinite; }
             @keyframes dv-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
-            .dv-period-count { margin-left: auto; font-size: 10px; color: #b0b0b8; font-weight: 600; }
-            .dv-period-body { display: flex; flex-direction: column; gap: 6px; min-height: 8px; }
-            /* Empty drop hint */
-            .dv-slot-empty { padding: 12px; border: 1.5px dashed #e5e5ea; border-radius: 12px; text-align: center; transition: all 0.15s; font-size: 11px; color: #b0b0b8; }
-            .dv-period.drag-over .dv-slot-empty { border-color: #ffb84d; color: #c2410f; background: #fff7ed; }
-            .dv-slot-empty b { color: #86868b; font-weight: 600; }
+            .dv-hour-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px; padding: 2px 0; }
+            /* Empty drop hint — thin so a whole empty day stays scannable */
+            .dv-hour-empty-hint { padding: 7px 10px; border: 1.5px dashed #ececf0; border-radius: 10px; font-size: 10px; color: #d2d2d7; transition: all 0.15s; }
+            .dv-hour-row:hover .dv-hour-empty-hint { border-color: #d2d2d7; color: #b0b0b8; }
+            .dv-hour-row.drag-over .dv-hour-empty-hint { border-color: #ffb84d; color: #c2410f; background: #fff7ed; }
             /* Snappy drop-in animation */
             @keyframes dv-drop-in { from { opacity: 0; transform: translateY(-6px) scale(0.98); } to { opacity: 1; transform: none; } }
             .schedule-block.dv-just-added { animation: dv-drop-in 0.28s cubic-bezier(0.2,0.8,0.2,1); }
             /* Source card while dragging */
-            .cs-card.dv-dragging, .premium-card.dv-dragging { opacity: 0.45; transform: scale(0.97); }
+            .cs-card.dv-dragging, .premium-card.dv-dragging, .schedule-block.dv-dragging { opacity: 0.45; transform: scale(0.97); }
             /* Schedule blocks — three variants */
-            #dv-schedule-host .schedule-block { display: flex; align-items: center; gap: 8px; padding: 10px 12px; border-radius: 12px; font-size: 13px; box-shadow: none !important; transition: all 0.15s; position: relative; overflow: hidden; }
+            #dv-schedule-host .schedule-block { display: flex; align-items: center; gap: 8px; padding: 10px 12px; border-radius: 12px; font-size: 13px; box-shadow: none !important; transition: all 0.15s; position: relative; overflow: hidden; cursor: grab; }
+            #dv-schedule-host .schedule-block:active { cursor: grabbing; }
             .dv-block-screen { background: #f5f5f7; border: 1px solid #e5e5ea; color: #1d1d1f; }
             .dv-block-noscreen { background: #ecfdf5; border: 1px solid #a7f3d0; color: #064e3b; }
             .dv-block-dad { background: #1d1d1f; border: 1px solid #1d1d1f; color: #fff; }
@@ -2673,7 +2676,14 @@
         function dvPeriodForHour(h) {
             return DV_PERIODS.find(p => h >= p.range[0] && h < p.range[1]) || DV_PERIODS[0];
         }
+        function dvFormatHour(h) {
+            if (h === 0) return '12 AM';
+            if (h === 12) return '12 PM';
+            return h < 12 ? `${h} AM` : `${h - 12} PM`;
+        }
 
+        // Full-day timeline: every hour in each period renders as its own row and drop
+        // target, whether or not a lesson is scheduled there — the whole day stays visible.
         function renderSchedule() {
             const container = document.getElementById('schedule-area');
             if (!container) return;
@@ -2682,59 +2692,67 @@
             const justAdded = window.__dvJustAddedBlock; window.__dvJustAddedBlock = null;
 
             DV_PERIODS.forEach(period => {
-                const blocks = schedule
-                    .filter(b => { const h = b.startHour ?? 9; return h >= period.range[0] && h < period.range[1]; })
-                    .sort((a, b) => (a.startHour ?? 9) - (b.startHour ?? 9));
-                const isNow = nowHour >= period.range[0] && nowHour < period.range[1];
+                const divider = document.createElement('div');
+                divider.className = 'dv-period-divider';
+                divider.innerHTML = `
+                    <div class="dv-period-divider-icon"><i class="fa-solid ${period.icon}"></i></div>
+                    <div class="dv-period-divider-label">${period.label}</div>
+                    <div class="dv-period-divider-sub">${period.sub}</div>`;
+                container.appendChild(divider);
 
-                let body;
-                if (blocks.length) {
-                    body = blocks.map(block => {
-                        const item = contentLibrary.find(i => i.id === block.contentId);
-                        if (!item) return '';
-                        const typeClass = item.type === 'dad' ? 'dv-block-dad' : item.type === 'screen' ? 'dv-block-screen' : 'dv-block-noscreen';
-                        const doneClass = block.completed ? 'dv-block-done' : '';
-                        const addedClass = block.id === justAdded ? ' dv-just-added' : '';
-                        const watch = item.youtubeUrl ? `<button class="dv-block-icon dv-block-watch" onclick="watchVideo('${item.youtubeUrl}', event)" title="Watch"><i class="fa-brands fa-youtube"></i></button>` : '';
-                        const checkIcon = block.completed ? 'fa-circle-check' : 'fa-circle';
-                        return `<div class="schedule-block ${typeClass} ${doneClass}${addedClass}" data-block-id="${block.id}">
-                            <div class="dv-block-body">
-                                <div class="dv-block-title">${item.title}</div>
-                                <div class="dv-block-meta">${item.duration} min · ${item.age}</div>
-                            </div>
-                            <div class="dv-block-actions">
-                                ${watch}
-                                <button class="dv-block-icon dv-block-check" onclick="markComplete('${block.id}', event)" title="${block.completed ? 'Mark not done' : 'Mark done'}"><i class="fa-solid ${checkIcon}"></i></button>
-                                <button class="dv-block-icon dv-block-remove" onclick="removeBlock('${block.id}', event)" title="Remove"><i class="fa-solid fa-xmark"></i></button>
-                            </div>
-                        </div>`;
-                    }).join('');
-                } else {
-                    body = `<div class="dv-slot-empty">Drop a lesson here <span style="opacity:.6">·</span> or tap <b>＋</b> on a card</div>`;
+                for (let h = period.range[0]; h < period.range[1]; h++) {
+                    const blocks = schedule.filter(b => (b.startHour ?? 9) === h);
+                    const isNow = h === nowHour;
+
+                    let body;
+                    if (blocks.length) {
+                        body = blocks.map(block => {
+                            const item = contentLibrary.find(i => i.id === block.contentId);
+                            if (!item) return '';
+                            const typeClass = item.type === 'dad' ? 'dv-block-dad' : item.type === 'screen' ? 'dv-block-screen' : 'dv-block-noscreen';
+                            const doneClass = block.completed ? 'dv-block-done' : '';
+                            const addedClass = block.id === justAdded ? ' dv-just-added' : '';
+                            const watch = item.youtubeUrl ? `<button class="dv-block-icon dv-block-watch" onclick="watchVideo('${item.youtubeUrl}', event)" title="Watch"><i class="fa-brands fa-youtube"></i></button>` : '';
+                            const checkIcon = block.completed ? 'fa-circle-check' : 'fa-circle';
+                            return `<div class="schedule-block ${typeClass} ${doneClass}${addedClass}" data-block-id="${block.id}" draggable="true" ondragstart="dvBlockDragStart(event, '${block.id}')" ondragend="dvBlockDragEnd(event)">
+                                <div class="dv-block-body">
+                                    <div class="dv-block-title">${item.title}</div>
+                                    <div class="dv-block-meta">${item.duration} min · ${item.age}</div>
+                                </div>
+                                <div class="dv-block-actions">
+                                    ${watch}
+                                    <button class="dv-block-icon dv-block-check" onclick="markComplete('${block.id}', event)" title="${block.completed ? 'Mark not done' : 'Mark done'}"><i class="fa-solid ${checkIcon}"></i></button>
+                                    <button class="dv-block-icon dv-block-remove" onclick="removeBlock('${block.id}', event)" title="Remove"><i class="fa-solid fa-xmark"></i></button>
+                                </div>
+                            </div>`;
+                        }).join('');
+                    } else {
+                        body = `<div class="dv-hour-empty-hint">Drop a lesson here</div>`;
+                    }
+
+                    const row = document.createElement('div');
+                    row.className = `dv-hour-row${isNow ? ' dv-now' : ''}${blocks.length ? ' has-blocks' : ' is-empty'}`;
+                    row.dataset.hour = h;
+                    row.setAttribute('ondrop', `dropToHour(event, ${h})`);
+                    row.setAttribute('ondragover', 'allowDrop(event)');
+                    row.setAttribute('ondragenter', "this.classList.add('drag-over')");
+                    row.setAttribute('ondragleave', "if(!this.contains(event.relatedTarget)) this.classList.remove('drag-over')");
+                    row.innerHTML = `
+                        <div class="dv-hour-time">${dvFormatHour(h)}${isNow ? '<span class="dv-period-now-dot"></span>' : ''}</div>
+                        <div class="dv-hour-body">${body}</div>`;
+                    container.appendChild(row);
                 }
-
-                const el = document.createElement('div');
-                el.className = `dv-period${isNow ? ' dv-now' : ''}`;
-                el.dataset.period = period.id;
-                el.setAttribute('ondrop', `dropToPeriod(event, '${period.id}')`);
-                el.setAttribute('ondragover', 'allowDrop(event)');
-                el.setAttribute('ondragenter', "this.classList.add('drag-over')");
-                el.setAttribute('ondragleave', "if(!this.contains(event.relatedTarget)) this.classList.remove('drag-over')");
-                el.innerHTML = `
-                    <div class="dv-period-head">
-                        <div class="dv-period-icon"><i class="fa-solid ${period.icon}"></i></div>
-                        <div>
-                            <div class="dv-period-label">${period.label}${isNow ? '<span class="dv-period-now-dot"></span>' : ''}</div>
-                            <div class="dv-period-sub">${period.sub}</div>
-                        </div>
-                        <div class="dv-period-count">${blocks.length || ''}</div>
-                    </div>
-                    <div class="dv-period-body">${body}</div>`;
-                container.appendChild(el);
             });
 
             enableMobileSwipe();
             updateStats();
+
+            // Orient the dad to "right now" the first time the day view renders.
+            if (!window.__dvScrolledToNow) {
+                window.__dvScrolledToNow = true;
+                const nowEl = container.querySelector('.dv-now');
+                if (nowEl) requestAnimationFrame(() => nowEl.scrollIntoView({ block: 'center', behavior: 'smooth' }));
+            }
         }
         
         function enableMobileSwipe() {
@@ -2818,13 +2836,39 @@
         
         function allowDrop(e) { e.preventDefault(); if (e.dataTransfer) e.dataTransfer.dropEffect = 'copy'; }
 
-        // Drop onto a period → place at the first free hour in that period.
-        function dropToPeriod(e, periodId) {
+        // Dragging an already-scheduled block (to retime it) vs. a fresh library/curriculum
+        // card (to add it) share the same drop target, distinguished by a 'block:' prefix.
+        function dvBlockDragStart(e, blockId) {
+            e.dataTransfer.setData('text/plain', 'block:' + blockId);
+            if (e.dataTransfer) e.dataTransfer.effectAllowed = 'move';
+            if (e.currentTarget) e.currentTarget.classList.add('dv-dragging');
+        }
+        function dvBlockDragEnd(e) {
+            if (e.currentTarget) e.currentTarget.classList.remove('dv-dragging');
+        }
+
+        // Drop onto a specific hour row → add a new block there, or retime an existing one.
+        function dropToHour(e, hour) {
             e.preventDefault();
             const el = e.currentTarget; if (el) el.classList.remove('drag-over');
-            const id = e.dataTransfer.getData('text/plain');
-            if (!id) return;
-            dvAddToPeriod(id, periodId);
+            const raw = e.dataTransfer.getData('text/plain');
+            if (!raw) return;
+            if (raw.startsWith('block:')) {
+                dvMoveBlockToHour(raw.slice(6), hour);
+            } else {
+                addBlockToSchedule(raw, hour);
+            }
+        }
+        function dvMoveBlockToHour(blockId, hour) {
+            const block = schedule.find(b => b.id === blockId);
+            if (!block || block.startHour === hour) return;
+            saveUndoState();
+            block.startHour = hour;
+            window.__dvJustAddedBlock = blockId;
+            renderSchedule();
+            updateStats();
+            renderDashboard();
+            autoSave();
         }
         function dvFreeHourInPeriod(periodId) {
             const period = DV_PERIODS.find(p => p.id === periodId) || DV_PERIODS[0];
