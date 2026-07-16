@@ -332,6 +332,8 @@
         .dv-family-avatars > div { width: 22px; height: 22px; border-radius: 999px; border: 2px solid #fff; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; color: #fff; margin-right: -6px; }
         .dv-streak-pill { display: flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 999px; background: #fff7ed; color: #c2410f; font-size: 12px; font-weight: 600; border: 1px solid #fed7aa; }
         .dv-streak-pill i { color: #ff9500; }
+        .dv-xp-pill { display: flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 999px; background: #ede9fe; color: #6d28d9; font-size: 12px; font-weight: 600; border: 1px solid #ddd6fe; }
+        .dv-xp-pill i { color: #7c3aed; }
         .dv-nav-btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: 999px; font-size: 13px; font-weight: 600; cursor: pointer; border: none; transition: background 0.15s; }
         .dv-nav-btn-primary { background: #1d1d1f; color: #fff; }
         .dv-nav-btn-primary:hover { background: #000; }
@@ -352,7 +354,7 @@
         .dv-saved-pill { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; background: #ecfdf5; color: #047857; font-size: 11px; font-weight: 600; }
         /* .hidden globally hides via !important so the existing auto-save toggle code keeps working */
         @media (max-width: 700px) {
-            .dv-family-pill, .dv-streak-pill { display: none; }
+            .dv-family-pill, .dv-streak-pill, .dv-xp-pill { display: none; }
             .dv-nav-btn span { display: none; }
             .dv-nav-btn { padding: 8px 12px; }
         }
@@ -373,6 +375,11 @@
                 <div class="dv-streak-pill" title="Daily streak">
                     <i class="fa-solid fa-fire"></i>
                     <span id="streak-counter">0 day streak</span>
+                </div>
+
+                <div class="dv-xp-pill" title="Accountability XP — challenges earn more than a quick tap">
+                    <i class="fa-solid fa-bolt"></i>
+                    <span id="xp-counter">0 XP</span>
                 </div>
 
                 <span id="auto-save-indicator" class="dv-saved-pill hidden">
@@ -580,11 +587,14 @@
         .dv-dd-pillar { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 999px; font-size: 10px; font-weight: 700; }
         .dv-dd-empty { text-align: center; padding: 28px 0; color: #b0b0b8; font-size: 13px; }
         .dv-stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 16px; }
-        .dv-lean { display: flex; align-items: center; gap: 12px; margin-top: 14px; padding: 12px 14px; background: #fff7ed; border: 1px solid #fed7aa; border-radius: 14px; cursor: pointer; transition: background 0.15s; }
+        .dv-lean { display: flex; flex-direction: column; gap: 10px; margin-top: 14px; padding: 12px 14px; background: #fff7ed; border: 1px solid #fed7aa; border-radius: 14px; cursor: pointer; transition: background 0.15s; }
         .dv-lean:hover { background: #ffedd5; }
+        .dv-lean-top { display: flex; align-items: center; gap: 12px; }
         .dv-lean-icon { width: 34px; height: 34px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; }
         .dv-lean-label { font-size: 9px; font-weight: 700; color: #c2410f; letter-spacing: 0.08em; }
         .dv-lean-name { font-size: 14px; font-weight: 700; color: #1d1d1f; margin-top: 1px; }
+        .dv-lean-action { display: block; width: 100%; background: #1d1d1f; color: #fff; border: none; border-radius: 10px; padding: 9px 12px; font-size: 12px; font-weight: 700; cursor: pointer; text-align: left; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .dv-lean-action:hover { background: #000; }
         .dv-stat { background: #f8f9fa; border-radius: 16px; padding: 14px; }
         .dv-stat-label { font-size: 10px; color: #86868b; font-weight: 600; letter-spacing: 0.06em; }
         .dv-stat-value { font-size: 24px; font-weight: 600; margin-top: 4px; }
@@ -690,12 +700,15 @@
                             </div>
                         </div>
                         <div class="dv-lean" id="dv-lean-nudge" onclick="dvSwitchTab('kids')" style="display:none;">
-                            <div class="dv-lean-icon" id="dv-lean-icon"><i class="fa-solid fa-seedling"></i></div>
-                            <div>
-                                <div class="dv-lean-label">LEAN IN THIS WEEK</div>
-                                <div class="dv-lean-name" id="dv-lean-name">—</div>
+                            <div class="dv-lean-top">
+                                <div class="dv-lean-icon" id="dv-lean-icon"><i class="fa-solid fa-seedling"></i></div>
+                                <div>
+                                    <div class="dv-lean-label">LEAN IN THIS WEEK</div>
+                                    <div class="dv-lean-name" id="dv-lean-name">—</div>
+                                </div>
+                                <i class="fa-solid fa-chevron-right" style="margin-left:auto;color:#c0c0c0;font-size:12px;"></i>
                             </div>
-                            <i class="fa-solid fa-chevron-right" style="margin-left:auto;color:#c0c0c0;font-size:12px;"></i>
+                            <button class="dv-lean-action" id="dv-lean-action" style="display:none;" onclick="dvAddLeanLesson(event)"></button>
                         </div>
                     </div>
                     <div class="dv-card dv-recall" id="dv-recall-card" style="display:none;"></div>
@@ -800,6 +813,19 @@
             .dv-block-check { color: #10b981; opacity: 0.8; }
             .dv-block-watch { color: #ef4444; }
             .dv-block-remove { font-size: 16px; }
+
+            /* Accountability challenge — a timer-verified completion worth more than a tap */
+            .dv-block-challenge { color: #7c3aed; opacity: 0.75; }
+            .dv-block-challenge:hover { opacity: 1; background: rgba(124,58,237,0.1); }
+            .schedule-block.challenge-active { background: #f5f3ff !important; border: 1px solid #ddd6fe !important; }
+            .dv-challenge-row { display: flex; align-items: center; gap: 6px; font-size: 11px; color: #6d28d9; margin-top: 2px; }
+            .dv-challenge-time { font-variant-numeric: tabular-nums; font-weight: 700; }
+            .dv-challenge-cancel { background: none; border: none; cursor: pointer; color: #b0b0b8; font-size: 11px; padding: 3px 8px; border-radius: 999px; flex-shrink: 0; }
+            .dv-challenge-cancel:hover { background: rgba(0,0,0,0.05); color: #86868b; }
+            .dv-challenge-claim { display: inline-flex; align-items: center; gap: 6px; padding: 7px 12px; border-radius: 999px; background: #7c3aed; color: #fff; border: none; font-size: 11px; font-weight: 700; cursor: pointer; white-space: nowrap; animation: dv-claim-pulse 1.4s ease-in-out infinite; }
+            .dv-challenge-claim:hover { background: #6d28d9; }
+            @keyframes dv-claim-pulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(124,58,237,0.35); } 50% { box-shadow: 0 0 0 6px rgba(124,58,237,0); } }
+            .dv-xp-tag { display: inline-flex; align-items: center; gap: 3px; font-size: 9px; font-weight: 700; color: #7c3aed; background: #ede9fe; padding: 2px 7px; border-radius: 999px; margin-left: 4px; }
 
             /* Schedule mini stats */
             .dv-mini-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 14px; padding-top: 14px; border-top: 1px solid #e5e5ea; }
@@ -1735,7 +1761,7 @@
         function dvArchiveDay(dateKey, blocks) {
             let log = {};
             try { log = JSON.parse(localStorage.getItem('dv_day_log') || '{}'); } catch (e) {}
-            log[dateKey] = blocks.map(b => ({ contentId: b.contentId, startHour: b.startHour, completed: !!b.completed }));
+            log[dateKey] = blocks.map(b => ({ contentId: b.contentId, startHour: b.startHour, completed: !!b.completed, xpMode: b.xpMode, xpAwarded: b.xpAwarded }));
             const keys = Object.keys(log).sort();
             while (keys.length > 60) { delete log[keys.shift()]; } // cap history so localStorage stays small
             localStorage.setItem('dv_day_log', JSON.stringify(log));
@@ -1782,11 +1808,12 @@
                 if (!item) return '';
                 const pillar = typeof dvPillarForContent === 'function' ? dvPillarForContent(b.contentId) : null;
                 const pillarTag = pillar ? `<span class="dv-dd-pillar" style="background:${pillar.color}1a;color:${pillar.color};"><i class="fa-solid ${pillar.icon}"></i> ${pillar.label}</span>` : '';
+                const xpTag = b.completed && b.xpMode === 'challenge' ? `<span class="dv-xp-tag"><i class="fa-solid fa-bolt"></i> ${b.xpAwarded || dvXpFor(item, 'challenge')} XP</span>` : '';
                 return `<div class="dv-dd-row ${b.completed ? 'done' : ''}">
                     <div class="dv-dd-check"><i class="fa-solid ${b.completed ? 'fa-circle-check' : 'fa-circle'}"></i></div>
                     <div class="dv-dd-main">
                         <div class="dv-dd-title">${item.title}</div>
-                        <div class="dv-dd-meta">${dvFormatHour(b.startHour ?? 9)} · ${item.duration} min ${pillarTag}</div>
+                        <div class="dv-dd-meta">${dvFormatHour(b.startHour ?? 9)} · ${item.duration} min ${pillarTag}${xpTag}</div>
                     </div>
                 </div>`;
             }).join('') : `<div class="dv-dd-empty">Nothing was planned this day.</div>`;
@@ -1942,6 +1969,28 @@
             let lean = window.DV_PILLARS[0], min = Infinity;
             window.DV_PILLARS.forEach(p => { const c = counts[p.id] || 0; if (c < min) { min = c; lean = p; } });
             return lean;
+        }
+        // A concrete, not-yet-scheduled lesson from today's curriculum that builds the
+        // lean pillar — turns "you're behind on Focus" into a one-tap fix, not just a link.
+        function dvLeanLessonToday() {
+            const lean = dvLeanPillar();
+            if (!lean) return null;
+            const lessons = window.__dvTodayLessons || [];
+            return lessons.find(l => {
+                const ref = (l.contentRefs && l.contentRefs[0]) || null;
+                if (!ref || !contentLibrary.find(i => i.id === ref)) return false;
+                if (schedule.some(b => b.contentId === ref)) return false; // already on today's plan
+                const p = dvPillarForContent(ref);
+                return p && p.id === lean.id;
+            }) || null;
+        }
+        function dvAddLeanLesson(e) {
+            if (e) e.stopPropagation();
+            const lesson = dvLeanLessonToday();
+            if (!lesson) return;
+            dvCommitLesson(lesson);
+            if (typeof showProgressToast === 'function') showProgressToast(`Added — builds this week's lean-in pillar`);
+            renderDashboard();
         }
         function dvRenderPillarBalance() {
             const host = document.getElementById('dv-pillar-balance');
@@ -2128,6 +2177,93 @@
             const head = document.getElementById('streak-counter'); if (head) head.textContent = `${currentStreak} day streak`;
             const kr = document.getElementById('kreme-streak-number'); if (kr) kr.textContent = currentStreak;
             const dvSt = document.getElementById('dv-stat-streak'); if (dvSt) dvSt.textContent = currentStreak;
+        }
+
+        // ════════════════════════════════════════════════════════════
+        // ACCOUNTABILITY XP — a self-tap ("Mark done") earns base XP;
+        // an Accountability Challenge (start a real timer, let the
+        // lesson's full duration actually elapse, then claim) earns a
+        // multiple of that. The timer is wall-clock based — no
+        // foreground/focus requirement — so screen-free activities
+        // (reading, tummy time, a walk) aren't penalized for not
+        // staring at the phone while doing them.
+        // ════════════════════════════════════════════════════════════
+        const DV_XP_PER_MIN = 1;
+        const DV_XP_CHALLENGE_MULTIPLIER = 3;
+        let totalXp = 0;
+        function dvXpFor(item, mode) {
+            const base = Math.max(1, Math.round((item.duration || 5) * DV_XP_PER_MIN));
+            return mode === 'challenge' ? base * DV_XP_CHALLENGE_MULTIPLIER : base;
+        }
+        function dvLoadXp() {
+            const raw = parseInt(localStorage.getItem('dv_xp'), 10);
+            totalXp = isNaN(raw) ? 0 : raw;
+            dvUpdateXpUI();
+        }
+        function dvSaveXp() { localStorage.setItem('dv_xp', String(totalXp)); }
+        function dvAddXp(n) {
+            totalXp = Math.max(0, totalXp + n);
+            dvSaveXp();
+            dvUpdateXpUI();
+        }
+        function dvUpdateXpUI() {
+            const el = document.getElementById('xp-counter');
+            if (el) el.textContent = `${totalXp} XP`;
+        }
+        function dvFormatCountdown(ms) {
+            const totalSec = Math.max(0, Math.ceil(ms / 1000));
+            return `${Math.floor(totalSec / 60)}:${String(totalSec % 60).padStart(2, '0')}`;
+        }
+        function dvStartChallenge(blockId, e) {
+            if (e) e.stopImmediatePropagation();
+            const block = schedule.find(b => b.id === blockId);
+            if (!block || block.completed) return;
+            block.challengeStartedAt = Date.now();
+            block.xpMode = 'challenge';
+            renderSchedule();
+            autoSave();
+            dvEnsureChallengeTicker();
+            if (typeof showProgressToast === 'function') showProgressToast('⏱ Challenge started — let it run the full time');
+        }
+        function dvCancelChallenge(blockId, e) {
+            if (e) e.stopImmediatePropagation();
+            const block = schedule.find(b => b.id === blockId);
+            if (!block) return;
+            delete block.challengeStartedAt;
+            block.xpMode = 'self';
+            __dvChallengeReadyFlipped.delete(blockId);
+            renderSchedule();
+            autoSave();
+        }
+        function dvClaimChallenge(blockId, e) {
+            __dvChallengeReadyFlipped.delete(blockId);
+            markComplete(blockId, e);
+        }
+        let __dvChallengeTicker = null;
+        const __dvChallengeReadyFlipped = new Set(); // blocks we've already re-rendered once they became claimable
+        function dvEnsureChallengeTicker() {
+            if (__dvChallengeTicker) return;
+            __dvChallengeTicker = setInterval(dvTickChallenges, 1000);
+        }
+        function dvTickChallenges() {
+            const active = schedule.filter(b => b.challengeStartedAt && !b.completed);
+            if (!active.length) {
+                if (__dvChallengeTicker) { clearInterval(__dvChallengeTicker); __dvChallengeTicker = null; }
+                return;
+            }
+            let flip = false;
+            active.forEach(b => {
+                const item = contentLibrary.find(i => i.id === b.contentId);
+                if (!item) return;
+                const remainMs = ((item.duration || 5) * 60000) - (Date.now() - b.challengeStartedAt);
+                if (remainMs <= 0) {
+                    if (!__dvChallengeReadyFlipped.has(b.id)) { __dvChallengeReadyFlipped.add(b.id); flip = true; }
+                    return;
+                }
+                const el = document.querySelector(`.dv-challenge-time[data-block-id="${b.id}"]`);
+                if (el) el.textContent = dvFormatCountdown(remainMs);
+            });
+            if (flip) renderSchedule(); // a challenge just became claimable — re-render once to flip its state
         }
 
         // ─── Today actions: add lessons straight from the dashboard ───
@@ -2488,6 +2624,18 @@
                     const name = document.getElementById('dv-lean-name');
                     if (icon) { icon.style.background = lean.color + '1a'; icon.style.color = lean.color; icon.innerHTML = `<i class="fa-solid ${lean.icon}"></i>`; }
                     if (name) name.textContent = lean.label;
+
+                    // If today's curriculum has an unscheduled lesson for this pillar, offer a one-tap add
+                    const actionEl = document.getElementById('dv-lean-action');
+                    const suggestion = typeof dvLeanLessonToday === 'function' ? dvLeanLessonToday() : null;
+                    if (actionEl) {
+                        if (suggestion) {
+                            actionEl.style.display = 'inline-flex';
+                            actionEl.textContent = `+ Add ${suggestion.title}`;
+                        } else {
+                            actionEl.style.display = 'none';
+                        }
+                    }
                 }
             }
         }
@@ -2535,6 +2683,8 @@
             dvLoadJournal();
             dvLoadPillarWeek();
             dvLoadRecall();
+            dvLoadXp();
+            dvEnsureChallengeTicker();
             renderDashboard();
             renderReflectionHistory();
             dvRestoreTab();
@@ -2877,15 +3027,36 @@
                             const addedClass = block.id === justAdded ? ' dv-just-added' : '';
                             const watch = item.youtubeUrl ? `<button class="dv-block-icon dv-block-watch" onclick="watchVideo('${item.youtubeUrl}', event)" title="Watch"><i class="fa-brands fa-youtube"></i></button>` : '';
                             const checkIcon = block.completed ? 'fa-circle-check' : 'fa-circle';
-                            return `<div class="schedule-block ${typeClass} ${doneClass}${addedClass}" data-block-id="${block.id}" draggable="true" ondragstart="dvBlockDragStart(event, '${block.id}')" ondragend="dvBlockDragEnd(event)">
+                            const challengeXp = dvXpFor(item, 'challenge');
+                            const remainMs = block.challengeStartedAt ? ((item.duration || 5) * 60000) - (Date.now() - block.challengeStartedAt) : null;
+                            const challengeReady = !block.completed && remainMs !== null && remainMs <= 0;
+                            const challengeRunning = !block.completed && remainMs !== null && remainMs > 0;
+
+                            let metaRow, actions;
+                            if (challengeReady) {
+                                metaRow = `<div class="dv-block-meta">${item.duration} min · ${item.age}</div>`;
+                                actions = `<button class="dv-challenge-claim" onclick="dvClaimChallenge('${block.id}', event)"><i class="fa-solid fa-bolt"></i> Claim ${challengeXp} XP</button>
+                                    <button class="dv-block-icon dv-block-remove" onclick="removeBlock('${block.id}', event)" title="Remove"><i class="fa-solid fa-xmark"></i></button>`;
+                            } else if (challengeRunning) {
+                                metaRow = `<div class="dv-challenge-row"><i class="fa-solid fa-stopwatch"></i> <span class="dv-challenge-time" data-block-id="${block.id}">${dvFormatCountdown(remainMs)}</span> left to unlock ${challengeXp} XP</div>`;
+                                actions = `<button class="dv-challenge-cancel" onclick="dvCancelChallenge('${block.id}', event)" title="Cancel challenge">Cancel</button>`;
+                            } else {
+                                const xpTag = block.completed && block.xpMode === 'challenge' ? `<span class="dv-xp-tag"><i class="fa-solid fa-bolt"></i> ${block.xpAwarded || challengeXp} XP</span>` : '';
+                                metaRow = `<div class="dv-block-meta">${item.duration} min · ${item.age}${xpTag}</div>`;
+                                const challengeBtn = !block.completed ? `<button class="dv-block-icon dv-block-challenge" onclick="dvStartChallenge('${block.id}', event)" title="Start accountability challenge — unlock ${challengeXp} XP"><i class="fa-solid fa-stopwatch"></i></button>` : '';
+                                actions = `${watch}
+                                    ${challengeBtn}
+                                    <button class="dv-block-icon dv-block-check" onclick="markComplete('${block.id}', event)" title="${block.completed ? 'Mark not done' : 'Mark done'}"><i class="fa-solid ${checkIcon}"></i></button>
+                                    <button class="dv-block-icon dv-block-remove" onclick="removeBlock('${block.id}', event)" title="Remove"><i class="fa-solid fa-xmark"></i></button>`;
+                            }
+
+                            return `<div class="schedule-block ${typeClass} ${doneClass}${addedClass}${challengeRunning || challengeReady ? ' challenge-active' : ''}" data-block-id="${block.id}" draggable="true" ondragstart="dvBlockDragStart(event, '${block.id}')" ondragend="dvBlockDragEnd(event)">
                                 <div class="dv-block-body">
                                     <div class="dv-block-title">${item.title}</div>
-                                    <div class="dv-block-meta">${item.duration} min · ${item.age}</div>
+                                    ${metaRow}
                                 </div>
                                 <div class="dv-block-actions">
-                                    ${watch}
-                                    <button class="dv-block-icon dv-block-check" onclick="markComplete('${block.id}', event)" title="${block.completed ? 'Mark not done' : 'Mark done'}"><i class="fa-solid ${checkIcon}"></i></button>
-                                    <button class="dv-block-icon dv-block-remove" onclick="removeBlock('${block.id}', event)" title="Remove"><i class="fa-solid fa-xmark"></i></button>
+                                    ${actions}
                                 </div>
                             </div>`;
                         }).join('');
@@ -3088,8 +3259,22 @@
             const block = schedule.find(b => b.id === blockId);
             if (!block) return;
             block.completed = !block.completed;
-            
+
             const item = contentLibrary.find(i => i.id === block.contentId);
+            if (item) {
+                if (block.completed) {
+                    const xp = dvXpFor(item, block.xpMode);
+                    block.xpAwarded = xp;
+                    dvAddXp(xp);
+                    if (typeof showProgressToast === 'function') showProgressToast(block.xpMode === 'challenge' ? `⚡ Challenge complete — +${xp} XP` : `+${xp} XP`);
+                    delete block.challengeStartedAt; // consume it — a claim shouldn't stay re-claimable
+                } else if (block.xpAwarded) {
+                    dvAddXp(-block.xpAwarded);
+                    block.xpAwarded = 0;
+                    block.xpMode = 'self'; // un-checking resets to neutral; earning 3x again requires a fresh challenge
+                    delete block.challengeStartedAt;
+                }
+            }
             if (item && block.completed) {
                 if (item.category.includes('Language')) progressData.languageMinutes += item.duration;
                 if (item.montessori === 'Practical Life') progressData.practicalSessions++;
