@@ -276,6 +276,31 @@
         .text-\[#0071e3\] { color: #0071e3; }
         .bg-\[#1d1d1f\] { background-color: #1d1d1f; }
         .text-\[#86868b\] { color: #86868b; }
+        /* Overlay-modal utilities — every "fixed inset-0 ..." modal in this file needs these */
+        .fixed { position: fixed; }
+        .inset-0 { top: 0; right: 0; bottom: 0; left: 0; }
+        .z-\[200\] { z-index: 200; }
+        .z-\[250\] { z-index: 250; }
+        .z-\[300\] { z-index: 300; }
+        .bg-black\/70 { background-color: rgba(0,0,0,0.7); }
+        .justify-center { justify-content: center; }
+        .justify-between { justify-content: space-between; }
+        .items-start { align-items: flex-start; }
+        .w-full { width: 100%; }
+        .max-w-sm { max-width: 24rem; }
+        .max-w-md { max-width: 28rem; }
+        .max-w-lg { max-width: 32rem; }
+        .max-h-\[80vh\] { max-height: 80vh; }
+        .max-h-\[85vh\] { max-height: 85vh; }
+        .max-h-\[400px\] { max-height: 400px; }
+        .max-h-\[420px\] { max-height: 420px; }
+        .overflow-y-auto { overflow-y: auto; }
+        .mb-1 { margin-bottom: 0.25rem; }
+        .p-6 { padding: 1.5rem; }
+        .tracking-widest { letter-spacing: 0.1em; }
+        .text-amber-600 { color: #d97706; }
+        .text-amber-500 { color: #f59e0b; }
+        .leading-none { line-height: 1; }
     </style>
     <style>
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-font-smoothing: antialiased; }
@@ -523,6 +548,37 @@
         .dv-card-h { font-size: 22px; font-weight: 600; letter-spacing: -0.01em; line-height: 1.2; }
         .dv-greet { font-size: 32px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.1; margin-bottom: 4px; }
         .dv-greet-sub { color: #86868b; font-size: 15px; }
+
+        /* Weekly progress strip — repetition made visible, one pip per day */
+        .dv-week-strip { display: flex; gap: 8px; margin-bottom: 22px; }
+        .dv-week-pip { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 5px; padding: 10px 4px 9px; border-radius: 14px; border: 1.5px solid #ececf0; background: #fff; cursor: pointer; transition: border-color 0.15s, transform 0.15s; font: inherit; }
+        .dv-week-pip:hover:not(:disabled) { border-color: #d2d2d7; transform: translateY(-1px); }
+        .dv-week-pip:disabled { cursor: default; }
+        .dv-week-pip.is-today { border-color: #ff9500; box-shadow: 0 0 0 3px rgba(255,149,0,0.12); }
+        .dv-week-pip-letter { font-size: 9px; font-weight: 700; letter-spacing: 0.06em; color: #b0b0b8; }
+        .dv-week-pip-num { font-size: 14px; font-weight: 700; color: #1d1d1f; }
+        .dv-week-pip-dot { min-width: 22px; height: 22px; padding: 0 4px; border-radius: 999px; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; }
+        .dv-week-pip-empty .dv-week-pip-dot { background: transparent; border: 1.5px dashed #e5e5ea; }
+        .dv-week-pip-planned .dv-week-pip-dot { background: #f0f0f2; color: #86868b; }
+        .dv-week-pip-partial .dv-week-pip-dot { background: #fff1e0; color: #c2410f; border: 1.5px solid #ffd9a8; }
+        .dv-week-pip-full .dv-week-pip-dot { background: #10b981; color: #fff; }
+        .dv-week-pip-full .dv-week-pip-num { color: #10b981; }
+        .dv-week-pip-future { background: #fafafa; }
+        .dv-week-pip-future .dv-week-pip-num, .dv-week-pip-future .dv-week-pip-letter { color: #e0e0e5; }
+        .dv-week-pip-future .dv-week-pip-dot { background: transparent; }
+
+        /* Day-detail modal (opened from a week pip) */
+        .dv-dd-list { display: flex; flex-direction: column; gap: 8px; }
+        .dv-dd-row { display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px; border-radius: 14px; background: #f8f9fa; }
+        .dv-dd-row.done { background: #ecfdf5; }
+        .dv-dd-check { color: #d2d2d7; font-size: 15px; padding-top: 2px; }
+        .dv-dd-row.done .dv-dd-check { color: #10b981; }
+        .dv-dd-main { flex: 1; min-width: 0; }
+        .dv-dd-title { font-weight: 600; font-size: 14px; }
+        .dv-dd-row.done .dv-dd-title { text-decoration: line-through; opacity: 0.7; }
+        .dv-dd-meta { font-size: 11px; color: #86868b; margin-top: 3px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+        .dv-dd-pillar { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 999px; font-size: 10px; font-weight: 700; }
+        .dv-dd-empty { text-align: center; padding: 28px 0; color: #b0b0b8; font-size: 13px; }
         .dv-stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 16px; }
         .dv-lean { display: flex; align-items: center; gap: 12px; margin-top: 14px; padding: 12px 14px; background: #fff7ed; border: 1px solid #fed7aa; border-radius: 14px; cursor: pointer; transition: background 0.15s; }
         .dv-lean:hover { background: #ffedd5; }
@@ -594,6 +650,7 @@
 
         <!-- ─── TODAY (Dashboard) ─── -->
         <section data-tab="today" class="dv-tab-active">
+            <div class="dv-week-strip" id="dv-week-strip"></div>
             <div style="margin-bottom: 28px;">
                 <div class="dv-greet" id="dv-greet">Good day.</div>
                 <div class="dv-greet-sub" id="dv-greet-sub">Here's a calm look at today.</div>
@@ -1647,6 +1704,110 @@
             if (h2) h2.textContent = isCurr ? "Today's curriculum" : 'Content library';
         }
 
+        // ════════════════════════════════════════════════════════════
+        // WEEKLY HISTORY — a per-day log so repetition and recall are
+        // visible, not just felt. Today reads live from `schedule`; once
+        // a day ends it's archived (read-only) and a fresh day starts.
+        // This is the "atomic habits" ledger: small daily reps, made
+        // visible, are what compound into the bigger goals.
+        // ════════════════════════════════════════════════════════════
+        function dvLocalDateKey(d) {
+            d = d || new Date();
+            return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+        }
+        function dvWeekDates() {
+            const now = new Date();
+            const isoDow = now.getDay() === 0 ? 7 : now.getDay(); // 1=Mon..7=Sun
+            const monday = new Date(now.getFullYear(), now.getMonth(), now.getDate() - (isoDow - 1));
+            return Array.from({ length: 7 }, (_, i) => new Date(monday.getFullYear(), monday.getMonth(), monday.getDate() + i));
+        }
+        // Roll `schedule` over into a fresh day when the calendar date has changed,
+        // archiving whatever was there before it's lost. Safe to call every load.
+        function dvRolloverDay() {
+            const todayKey = dvLocalDateKey();
+            const savedDateKey = localStorage.getItem('dv_schedule_date');
+            if (savedDateKey && savedDateKey !== todayKey) {
+                if (schedule.length) dvArchiveDay(savedDateKey, schedule);
+                schedule = [];
+            }
+            localStorage.setItem('dv_schedule_date', todayKey);
+        }
+        function dvArchiveDay(dateKey, blocks) {
+            let log = {};
+            try { log = JSON.parse(localStorage.getItem('dv_day_log') || '{}'); } catch (e) {}
+            log[dateKey] = blocks.map(b => ({ contentId: b.contentId, startHour: b.startHour, completed: !!b.completed }));
+            const keys = Object.keys(log).sort();
+            while (keys.length > 60) { delete log[keys.shift()]; } // cap history so localStorage stays small
+            localStorage.setItem('dv_day_log', JSON.stringify(log));
+        }
+        function dvLoadDayLog() {
+            try { return JSON.parse(localStorage.getItem('dv_day_log') || '{}'); } catch (e) { return {}; }
+        }
+        // The blocks for any date: live `schedule` for today, the archive for past days,
+        // null when there's no record at all (nothing planned, or the app wasn't open).
+        function dvBlocksForDate(dateKey) {
+            if (dateKey === dvLocalDateKey()) return schedule;
+            return dvLoadDayLog()[dateKey] || null;
+        }
+        const DV_WEEK_LETTERS = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+        function dvRenderWeekStrip() {
+            const host = document.getElementById('dv-week-strip');
+            if (!host) return;
+            const todayKey = dvLocalDateKey();
+            host.innerHTML = dvWeekDates().map((d, i) => {
+                const key = dvLocalDateKey(d);
+                const isToday = key === todayKey;
+                const isFuture = key > todayKey;
+                const blocks = isFuture ? null : dvBlocksForDate(key);
+                const total = blocks ? blocks.length : 0;
+                const done = blocks ? blocks.filter(b => b.completed).length : 0;
+                const state = isFuture ? 'future' : total === 0 ? 'empty' : done === total ? 'full' : done > 0 ? 'partial' : 'planned';
+                const dot = isFuture ? '' : total ? `${done}/${total}` : '';
+                const label = d.toLocaleDateString(undefined, { weekday: 'long', month: 'short', day: 'numeric' });
+                return `<button type="button" class="dv-week-pip dv-week-pip-${state}${isToday ? ' is-today' : ''}" ${isFuture ? 'disabled' : `onclick="dvOpenDayDetail('${key}')"`} title="${label}">
+                    <span class="dv-week-pip-letter">${DV_WEEK_LETTERS[i]}</span>
+                    <span class="dv-week-pip-dot">${dot}</span>
+                    <span class="dv-week-pip-num">${d.getDate()}</span>
+                </button>`;
+            }).join('');
+        }
+        function dvOpenDayDetail(dateKey) {
+            const blocks = dvBlocksForDate(dateKey) || [];
+            const isToday = dateKey === dvLocalDateKey();
+            const label = new Date(dateKey + 'T00:00:00').toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' });
+            const done = blocks.filter(b => b.completed).length;
+
+            const rows = blocks.length ? blocks.slice().sort((a, b) => (a.startHour ?? 9) - (b.startHour ?? 9)).map(b => {
+                const item = contentLibrary.find(i => i.id === b.contentId);
+                if (!item) return '';
+                const pillar = typeof dvPillarForContent === 'function' ? dvPillarForContent(b.contentId) : null;
+                const pillarTag = pillar ? `<span class="dv-dd-pillar" style="background:${pillar.color}1a;color:${pillar.color};"><i class="fa-solid ${pillar.icon}"></i> ${pillar.label}</span>` : '';
+                return `<div class="dv-dd-row ${b.completed ? 'done' : ''}">
+                    <div class="dv-dd-check"><i class="fa-solid ${b.completed ? 'fa-circle-check' : 'fa-circle'}"></i></div>
+                    <div class="dv-dd-main">
+                        <div class="dv-dd-title">${item.title}</div>
+                        <div class="dv-dd-meta">${dvFormatHour(b.startHour ?? 9)} · ${item.duration} min ${pillarTag}</div>
+                    </div>
+                </div>`;
+            }).join('') : `<div class="dv-dd-empty">Nothing was planned this day.</div>`;
+
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black/70 z-[200] flex items-center justify-center p-4';
+            modal.innerHTML = `
+                <div class="bg-white rounded-3xl max-w-md w-full p-6 max-h-[80vh] overflow-y-auto">
+                    <div class="flex justify-between items-start mb-1">
+                        <div>
+                            <div class="text-xs font-semibold tracking-widest text-amber-600">${isToday ? 'TODAY' : 'LOOKING BACK'}</div>
+                            <div class="text-2xl font-bold">${label}</div>
+                        </div>
+                        <button onclick="this.closest('.fixed').remove()" class="text-3xl leading-none">&times;</button>
+                    </div>
+                    <div class="text-sm text-[#86868b] mb-4">${blocks.length ? `${done} of ${blocks.length} completed` : "A quiet day — nothing logged."}</div>
+                    <div class="dv-dd-list">${rows}</div>
+                </div>`;
+            document.body.appendChild(modal);
+        }
+
         // ─── Evening reflection journal ───
         // ─── Pillar balance: map completed content → EF pillar, tally per week ───
         let __dvContentPillar = null;
@@ -2202,6 +2363,7 @@
 
         function renderDashboard() {
             dvRenderFamilyPill();
+            if (typeof dvRenderWeekStrip === 'function') dvRenderWeekStrip();
             if (typeof dvRenderRecallCard === 'function') dvRenderRecallCard();
             // Greeting (personalized if we have a profile)
             const hour = new Date().getHours();
@@ -2340,6 +2502,7 @@
             try {
                 const savedSchedule = dvLoad('today_v3');
                 if (savedSchedule) schedule = savedSchedule; else schedule = [];
+                dvRolloverDay();
 
                 const savedProgress = dvLoad('progress_v3');
                 if (savedProgress) progressData = savedProgress;
@@ -2985,7 +3148,7 @@
             autoSave();
         }
         
-        function removeBlock(blockId, e) { e.stopImmediatePropagation(); saveUndoState(); schedule = schedule.filter(b => b.id !== blockId); renderSchedule(); updateStats(); autoSave(); }
+        function removeBlock(blockId, e) { e.stopImmediatePropagation(); saveUndoState(); schedule = schedule.filter(b => b.id !== blockId); renderSchedule(); updateStats(); if (typeof renderDashboard === 'function') renderDashboard(); autoSave(); }
         
         function updateStats() {
             let screen = 0, noScreen = 0, dad = 0;
