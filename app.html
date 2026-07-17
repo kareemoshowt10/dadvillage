@@ -792,6 +792,10 @@
             .schedule-block.dv-just-added { animation: dv-drop-in 0.28s cubic-bezier(0.2,0.8,0.2,1); }
             /* Source card while dragging */
             .cs-card.dv-dragging, .premium-card.dv-dragging, .schedule-block.dv-dragging { opacity: 0.45; transform: scale(0.97); }
+            /* Touch drag-and-drop (long-press to lift, since native HTML5 DnD never fires on touch) */
+            .dv-touch-lifting { opacity: 0.55 !important; transform: scale(0.97); transition: opacity 0.15s, transform 0.15s; }
+            .dv-drag-ghost { position: fixed; z-index: 999; pointer-events: none; transform: translate(-50%, -140%); background: #1d1d1f; color: #fff; font-size: 12px; font-weight: 600; padding: 8px 14px; border-radius: 999px; box-shadow: 0 8px 24px rgba(0,0,0,0.25); max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+            .schedule-block, .cs-card.draggable, .premium-card.draggable { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; }
             /* Schedule blocks — three variants */
             #dv-schedule-host .schedule-block { display: flex; align-items: center; gap: 8px; padding: 10px 12px; border-radius: 12px; font-size: 13px; box-shadow: none !important; transition: all 0.15s; position: relative; overflow: hidden; cursor: grab; }
             #dv-schedule-host .schedule-block:active { cursor: grabbing; }
@@ -2793,6 +2797,7 @@
                 
                 card.addEventListener('dragstart', e => { e.dataTransfer.setData('text/plain', item.id); card.style.opacity = '0.4'; });
                 card.addEventListener('dragend', () => card.style.opacity = '1');
+                dvAttachTouchDrag(card, item.id);
                 container.appendChild(card);
             });
         }
@@ -3095,6 +3100,7 @@
                         trackEvent && trackEvent('curriculum_lesson_dragged', { lessonId: lesson.id });
                     });
                     card.addEventListener('dragend', () => card.classList.remove('dv-dragging'));
+                    dvAttachTouchDrag(card, primaryRef);
                 }
 
                 shelf.appendChild(card);
@@ -3221,82 +3227,231 @@
                 if (nowEl) requestAnimationFrame(() => nowEl.scrollIntoView({ block: 'center', behavior: 'smooth' }));
             }
         }
-        
+
+        // ════════════════════════════════════════════════════════════
+        // TOUCH DRAG-AND-DROP — native HTML5 drag (draggable="true" +
+        // dragstart/drop) never fires on touch devices at all, so mobile
+        // had no real drag, only tap-to-add. This adds an equivalent
+        // long-press-to-lift gesture via Pointer Events, gated on
+        // pointerType === 'touch' so desktop's native DnD is untouched.
+        // A held-still ~220ms decides "drag"; an immediate move decides
+        // "scroll" (or, on schedule blocks, "swipe") — so normal
+        // scrolling and the existing swipe-to-complete/delete gesture
+        // both keep working exactly as before.
+        // ════════════════════════════════════════════════════════════
+        const DV_DRAG_ARM_MS = 220;
+        const DV_DRAG_JITTER_PX = 10;
+
+        function dvHourRowAt(x, y) {
+            const el = document.elementFromPoint(x, y);
+            return el ? el.closest('.dv-hour-row') : null;
+        }
+        function dvCreateDragGhost(sourceEl, x, y) {
+            const title = sourceEl.querySelector('.cs-name, .dv-block-title, .font-semibold')?.textContent || 'Lesson';
+            const ghost = document.createElement('div');
+            ghost.className = 'dv-drag-ghost';
+            ghost.textContent = title;
+            document.body.appendChild(ghost);
+            dvMoveDragGhost(ghost, x, y);
+            return ghost;
+        }
+        function dvMoveDragGhost(ghost, x, y) {
+            if (!ghost) return;
+            ghost.style.left = x + 'px';
+            ghost.style.top = y + 'px';
+        }
+        let __dvAutoScrollRAF = null, __dvAutoScrollDir = 0, __dvAutoScrollHost = null;
+        function dvAutoScrollCheck(clientY) {
+            const host = document.getElementById('dv-schedule-host');
+            if (!host) return;
+            const rect = host.getBoundingClientRect();
+            const EDGE = 50;
+            __dvAutoScrollHost = host;
+            if (clientY < rect.top + EDGE) __dvAutoScrollDir = -1;
+            else if (clientY > rect.bottom - EDGE) __dvAutoScrollDir = 1;
+            else __dvAutoScrollDir = 0;
+            if (__dvAutoScrollDir !== 0 && !__dvAutoScrollRAF) dvAutoScrollTick();
+        }
+        function dvAutoScrollTick() {
+            if (!__dvAutoScrollDir || !__dvAutoScrollHost) { __dvAutoScrollRAF = null; return; }
+            __dvAutoScrollHost.scrollTop += __dvAutoScrollDir * 8;
+            __dvAutoScrollRAF = requestAnimationFrame(dvAutoScrollTick);
+        }
+        function dvStopAutoScroll() {
+            __dvAutoScrollDir = 0;
+            if (__dvAutoScrollRAF) { cancelAnimationFrame(__dvAutoScrollRAF); __dvAutoScrollRAF = null; }
+        }
+
+        // Long-press-to-drag for source cards (curriculum shelf + content library).
+        function dvAttachTouchDrag(card, contentId) {
+            let tracking = false, armed = false, startX = 0, startY = 0, armTimer = null, ghost = null, lastHourRow = null;
+
+            function cleanup() {
+                tracking = false; armed = false;
+                if (armTimer) { clearTimeout(armTimer); armTimer = null; }
+                if (ghost) { ghost.remove(); ghost = null; }
+                if (lastHourRow) { lastHourRow.classList.remove('drag-over'); lastHourRow = null; }
+                card.classList.remove('dv-touch-lifting');
+                dvStopAutoScroll();
+            }
+
+            card.addEventListener('pointerdown', e => {
+                if (e.pointerType !== 'touch') return;
+                if (e.target.closest('button')) return; // don't hijack Add/Watch taps
+                tracking = true; armed = false;
+                startX = e.clientX; startY = e.clientY;
+                armTimer = setTimeout(() => {
+                    armed = true; armTimer = null;
+                    card.classList.add('dv-touch-lifting');
+                    if (navigator.vibrate) navigator.vibrate(8);
+                    ghost = dvCreateDragGhost(card, e.clientX, e.clientY);
+                }, DV_DRAG_ARM_MS);
+            }, { passive: true });
+
+            card.addEventListener('pointermove', e => {
+                if (e.pointerType !== 'touch' || !tracking) return;
+                if (!armed) {
+                    if (Math.abs(e.clientX - startX) > DV_DRAG_JITTER_PX || Math.abs(e.clientY - startY) > DV_DRAG_JITTER_PX) {
+                        if (armTimer) { clearTimeout(armTimer); armTimer = null; }
+                        tracking = false; // real movement before arming = a scroll, not a drag
+                    }
+                    return;
+                }
+                e.preventDefault();
+                dvMoveDragGhost(ghost, e.clientX, e.clientY);
+                const row = dvHourRowAt(e.clientX, e.clientY);
+                if (row !== lastHourRow) {
+                    if (lastHourRow) lastHourRow.classList.remove('drag-over');
+                    if (row) row.classList.add('drag-over');
+                    lastHourRow = row;
+                }
+                dvAutoScrollCheck(e.clientY);
+            }, { passive: false });
+
+            card.addEventListener('pointerup', e => {
+                if (e.pointerType !== 'touch' || !tracking) return;
+                if (armed) {
+                    const row = dvHourRowAt(e.clientX, e.clientY);
+                    if (row) addBlockToSchedule(contentId, parseInt(row.dataset.hour, 10));
+                }
+                cleanup();
+            });
+            card.addEventListener('pointercancel', cleanup);
+        }
+
         function enableMobileSwipe() {
             const blocks = document.querySelectorAll('.schedule-block');
             blocks.forEach(block => {
-                let startX = 0;
-                let currentX = 0;
-                
-                // Add action backgrounds
                 if (!block.querySelector('.swipe-action-bg')) {
                     const completeBg = document.createElement('div');
                     completeBg.className = 'swipe-action-bg swipe-complete-bg';
                     completeBg.innerHTML = '<i class="fa-solid fa-check mr-1"></i> DONE';
-                    
+
                     const deleteBg = document.createElement('div');
                     deleteBg.className = 'swipe-action-bg swipe-delete-bg';
                     deleteBg.innerHTML = '<i class="fa-solid fa-trash mr-1"></i> REMOVE';
-                    
+
                     block.appendChild(completeBg);
                     block.appendChild(deleteBg);
                 }
-                
-                block.addEventListener('touchstart', (e) => {
-                    startX = e.touches[0].clientX;
-                    block.style.transition = 'none';
-                }, { passive: true });
-                
-                block.addEventListener('touchmove', (e) => {
-                    currentX = e.touches[0].clientX;
-                    const diff = currentX - startX;
-                    
-                    // Reveal action backgrounds based on swipe direction
-                    const completeBg = block.querySelector('.swipe-complete-bg');
-                    const deleteBg = block.querySelector('.swipe-delete-bg');
-                    
-                    if (diff > 0) {
-                        completeBg.style.opacity = Math.min(diff / 100, 1);
-                        deleteBg.style.opacity = 0;
-                    } else {
-                        deleteBg.style.opacity = Math.min(Math.abs(diff) / 100, 1);
-                        completeBg.style.opacity = 0;
-                    }
-                    
-                    block.style.transform = `translateX(${diff}px)`;
-                }, { passive: true });
-                
-                block.addEventListener('touchend', () => {
-                    const diff = currentX - startX;
+
+                // One gesture state machine per block, covering both the existing
+                // swipe-to-complete/delete and the new long-press-to-retime drag —
+                // two separate listener sets on the same element would race each other.
+                let tracking = false, startX = 0, startY = 0, mode = null; // mode: null | 'swipe' | 'drag' | 'scroll'
+                let armTimer = null, ghost = null, lastHourRow = null;
+
+                function resetSwipeVisual() {
                     block.style.transition = 'transform 0.35s cubic-bezier(0.32, 0.72, 0, 1)';
-                    
-                    if (diff > 100) {
-                        // Swipe right → Complete
-                        const blockId = block.dataset.blockId;
-                        if (blockId) {
-                            const fakeEvent = { stopImmediatePropagation: () => {}, currentTarget: block };
-                            markComplete(blockId, fakeEvent);
-                        }
-                    } else if (diff < -100) {
-                        // Swipe left → Delete
-                        const blockId = block.dataset.blockId;
-                        if (blockId) {
-                            const fakeEvent = { stopImmediatePropagation: () => {} };
-                            removeBlock(blockId, fakeEvent);
-                        }
-                    }
-                    
                     block.style.transform = 'translateX(0)';
-                    
-                    // Reset backgrounds
                     const completeBg = block.querySelector('.swipe-complete-bg');
                     const deleteBg = block.querySelector('.swipe-delete-bg');
                     if (completeBg) completeBg.style.opacity = '0';
                     if (deleteBg) deleteBg.style.opacity = '0';
-                    
-                    setTimeout(() => {
-                        block.style.transition = '';
-                    }, 350);
+                    setTimeout(() => { block.style.transition = ''; }, 350);
+                }
+                function cleanupDrag() {
+                    if (ghost) { ghost.remove(); ghost = null; }
+                    if (lastHourRow) { lastHourRow.classList.remove('drag-over'); lastHourRow = null; }
+                    block.classList.remove('dv-touch-lifting');
+                    dvStopAutoScroll();
+                }
+
+                block.addEventListener('pointerdown', e => {
+                    if (e.pointerType !== 'touch') return;
+                    if (e.target.closest('button')) return;
+                    tracking = true; mode = null;
+                    startX = e.clientX; startY = e.clientY;
+                    block.style.transition = 'none';
+                    armTimer = setTimeout(() => {
+                        mode = 'drag'; armTimer = null;
+                        block.classList.add('dv-touch-lifting');
+                        if (navigator.vibrate) navigator.vibrate(8);
+                        ghost = dvCreateDragGhost(block, e.clientX, e.clientY);
+                    }, DV_DRAG_ARM_MS);
+                }, { passive: true });
+
+                block.addEventListener('pointermove', e => {
+                    if (e.pointerType !== 'touch' || !tracking) return;
+                    const dx = e.clientX - startX, dy = e.clientY - startY;
+
+                    if (mode === null) {
+                        if (Math.abs(dx) > DV_DRAG_JITTER_PX && Math.abs(dx) > Math.abs(dy) * 1.5) {
+                            mode = 'swipe';
+                            if (armTimer) { clearTimeout(armTimer); armTimer = null; }
+                        } else if (Math.abs(dy) > DV_DRAG_JITTER_PX) {
+                            mode = 'scroll';
+                            if (armTimer) { clearTimeout(armTimer); armTimer = null; }
+                        }
+                        if (mode === null) return; // still deciding
+                    }
+
+                    if (mode === 'swipe') {
+                        const completeBg = block.querySelector('.swipe-complete-bg');
+                        const deleteBg = block.querySelector('.swipe-delete-bg');
+                        if (dx > 0) { completeBg.style.opacity = Math.min(dx / 100, 1); deleteBg.style.opacity = 0; }
+                        else { deleteBg.style.opacity = Math.min(Math.abs(dx) / 100, 1); completeBg.style.opacity = 0; }
+                        block.style.transform = `translateX(${dx}px)`;
+                    } else if (mode === 'drag') {
+                        e.preventDefault();
+                        dvMoveDragGhost(ghost, e.clientX, e.clientY);
+                        const row = dvHourRowAt(e.clientX, e.clientY);
+                        if (row !== lastHourRow) {
+                            if (lastHourRow) lastHourRow.classList.remove('drag-over');
+                            if (row) row.classList.add('drag-over');
+                            lastHourRow = row;
+                        }
+                        dvAutoScrollCheck(e.clientY);
+                    }
+                }, { passive: false });
+
+                block.addEventListener('pointerup', e => {
+                    if (e.pointerType !== 'touch' || !tracking) return;
+                    tracking = false;
+                    if (armTimer) { clearTimeout(armTimer); armTimer = null; }
+
+                    if (mode === 'swipe') {
+                        const dx = e.clientX - startX;
+                        const blockId = block.dataset.blockId;
+                        if (dx > 100 && blockId) markComplete(blockId, { stopImmediatePropagation: () => {}, currentTarget: block });
+                        else if (dx < -100 && blockId) removeBlock(blockId, { stopImmediatePropagation: () => {} });
+                        resetSwipeVisual();
+                    } else if (mode === 'drag') {
+                        const row = dvHourRowAt(e.clientX, e.clientY);
+                        const blockId = block.dataset.blockId;
+                        if (row && blockId) dvMoveBlockToHour(blockId, parseInt(row.dataset.hour, 10));
+                        cleanupDrag();
+                    }
+                    mode = null;
+                });
+
+                block.addEventListener('pointercancel', () => {
+                    if (!tracking) return;
+                    tracking = false;
+                    if (armTimer) { clearTimeout(armTimer); armTimer = null; }
+                    if (mode === 'swipe') resetSwipeVisual();
+                    if (mode === 'drag') cleanupDrag();
+                    mode = null;
                 });
             });
         }
