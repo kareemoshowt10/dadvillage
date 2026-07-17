@@ -597,6 +597,20 @@
         .dv-lean-action:hover { background: #000; }
         .dv-stat { background: #f8f9fa; border-radius: 16px; padding: 14px; }
         .dv-stat-label { font-size: 10px; color: #86868b; font-weight: 600; letter-spacing: 0.06em; }
+        /* Learning Mix — per-category XP balance */
+        .dv-lm-sub { font-size: 12px; color: #86868b; line-height: 1.45; margin: 6px 0 14px; }
+        .dv-lm-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+        .dv-lm-row.dv-lm-zero { opacity: 0.45; }
+        .dv-lm-icon { width: 28px; height: 28px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 12px; flex-shrink: 0; }
+        .dv-lm-main { flex: 1; min-width: 0; }
+        .dv-lm-top { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 3px; }
+        .dv-lm-name { font-size: 12px; font-weight: 600; }
+        .dv-lm-xp { font-size: 10px; color: #86868b; font-weight: 600; font-variant-numeric: tabular-nums; }
+        .dv-lm-bar { height: 6px; background: #f0f0f2; border-radius: 999px; overflow: hidden; }
+        .dv-lm-fill { height: 100%; border-radius: 999px; transition: width 0.4s cubic-bezier(0.2,0.8,0.2,1); }
+        .dv-lm-empty { font-size: 12px; color: #b0b0b8; text-align: center; padding: 16px 0; }
+        .dv-lm-note { font-size: 11px; color: #1d1d1f; background: #f8f9fa; border-radius: 10px; padding: 9px 12px; margin-top: 6px; line-height: 1.5; }
+        .dv-lm-note b { font-weight: 700; }
         .dv-stat-value { font-size: 24px; font-weight: 600; margin-top: 4px; }
         .dv-stat-unit { font-size: 12px; color: #86868b; margin-left: 4px; }
         .dv-glance-list { display: flex; flex-direction: column; gap: 10px; margin-top: 14px; }
@@ -710,6 +724,13 @@
                             </div>
                             <button class="dv-lean-action" id="dv-lean-action" style="display:none;" onclick="dvAddLeanLesson(event)"></button>
                         </div>
+                    </div>
+                    <div class="dv-card" id="dv-learn-mix-card">
+                        <div class="dv-card-title">LEARNING MIX</div>
+                        <div class="dv-card-h">What they're consuming</div>
+                        <div class="dv-lm-sub">XP by learning category — a lopsided mix shows their likes; empty rows show what to ease in next.</div>
+                        <div id="dv-learn-mix"></div>
+                        <div class="dv-lm-note" id="dv-learn-mix-note" style="display:none;"></div>
                     </div>
                     <div class="dv-card dv-recall" id="dv-recall-card" style="display:none;"></div>
                 </div>
@@ -1515,7 +1536,50 @@
 
             // ── Infant audio (0–12mo) — SCREEN OFF, audio only ──
             { id: "audio-lullaby", type: "noscreen", category: "Bonding", title: "Lullaby Playlist (audio only)", duration: 15, age: "0-12mo", description: "Screen off — same soft songs nightly become a sleep cue", montessori: "Bonding", icon: "fa-solid fa-music", youtubeUrl: null, roi: { bonding: 4, emotional: 4 }, recall: true },
-            { id: "audio-classical", type: "noscreen", category: "Sensorial", title: "Calm Classical (audio only)", duration: 12, age: "0-12mo", description: "Screen off — gentle background for floor play", montessori: "Sensorial", icon: "fa-solid fa-compact-disc", youtubeUrl: null, roi: { sensorial: 3, emotional: 3 } }
+            { id: "audio-classical", type: "noscreen", category: "Sensorial", title: "Calm Classical (audio only)", duration: 12, age: "0-12mo", description: "Screen off — gentle background for floor play", montessori: "Sensorial", icon: "fa-solid fa-compact-disc", youtubeUrl: null, roi: { sensorial: 3, emotional: 3 } },
+
+            // ════════════════════════════════════════════════════════════
+            // VETTED EXPANSION — each item carries `learn`, a canonical
+            // learning-category id (see DV_LEARN_CATS). Completions feed
+            // per-category XP so the Learning Mix shows what's actually
+            // being consumed. All channels chosen for slow pacing, real
+            // pedagogy, and classroom/parent track record — no fast-cut
+            // overstimulation content.
+            // ════════════════════════════════════════════════════════════
+
+            // ── Math & Logic ──
+            { id: "nb-meet-numbers", type: "screen", category: "Math", learn: "math", title: "Numberblocks – Meet the Numbers", duration: 12, age: "2.5y", description: "BBC's gold-standard number sense — quantities as characters", montessori: "Mathematics", icon: "fa-solid fa-cubes-stacked", youtubeUrl: "https://www.youtube.com/@Numberblocks", roi: { math: 5, language: 1 }, series: "numberblocks", seriesTitle: "Numberblocks", episode: 1, recall: true, kreme: true },
+            { id: "nb-counting-five", type: "screen", category: "Math", learn: "math", title: "Numberblocks – Counting to Five", duration: 11, age: "2.5y", description: "One-to-one counting built into story", montessori: "Mathematics", icon: "fa-solid fa-dice-five", youtubeUrl: "https://www.youtube.com/@Numberblocks", roi: { math: 5 }, series: "numberblocks", seriesTitle: "Numberblocks", episode: 2 },
+            { id: "sesame-count", type: "screen", category: "Math", learn: "math", title: "Sesame Street – Counting with The Count", duration: 8, age: "2.5y", description: "The classic — counting with delight, one-ah two-ah", montessori: "Mathematics", icon: "fa-solid fa-bolt", youtubeUrl: "https://www.youtube.com/@SesameStreet", roi: { math: 4, emotional: 1 } },
+
+            // ── Language & Phonics ──
+            { id: "ab-first-sounds", type: "screen", category: "Language", learn: "language", title: "Alphablocks – First Letter Sounds", duration: 12, age: "2.5y", description: "Phonics from the Numberblocks team — letters that talk", montessori: "Language", icon: "fa-solid fa-font", youtubeUrl: "https://www.youtube.com/@Alphablocks", roi: { language: 5 }, series: "alphablocks", seriesTitle: "Alphablocks", episode: 1, recall: true, kreme: true },
+            { id: "ab-word-magic", type: "screen", category: "Language", learn: "language", title: "Alphablocks – Making First Words", duration: 11, age: "2.5y", description: "Letters hold hands to make words — blending made visible", montessori: "Language", icon: "fa-solid fa-spell-check", youtubeUrl: "https://www.youtube.com/@Alphablocks", roi: { language: 5 }, series: "alphablocks", seriesTitle: "Alphablocks", episode: 2 },
+
+            // ── Music & Rhythm ──
+            { id: "mgc-rhymes", type: "screen", category: "Music", learn: "music", title: "Mother Goose Club – Nursery Rhyme Singalong", duration: 13, age: "12-24mo", description: "Classic rhymes — rhythm and rhyme are pre-reading skills", montessori: "Language + Music", icon: "fa-solid fa-feather", youtubeUrl: "https://www.youtube.com/@MotherGooseClub", roi: { language: 3, emotional: 2 }, series: "mothergoose", seriesTitle: "Mother Goose Club", episode: 1, recall: true },
+            { id: "kiboomers-action", type: "screen", category: "Music", learn: "music", title: "The Kiboomers – Action Songs", duration: 10, age: "2.5y", description: "Preschool-teacher staples — follow-along verses", montessori: "Music + Motor", icon: "fa-solid fa-drum", youtubeUrl: "https://www.youtube.com/@TheKiboomers", roi: { language: 2, motor: 3 } },
+            { id: "sss-twinkle", type: "screen", category: "Music", learn: "music", title: "Super Simple – Twinkle Twinkle + Gentle Songs", duration: 10, age: "12-24mo", description: "Slow songs for wind-down — melody as a calming cue", montessori: "Music", icon: "fa-solid fa-star", youtubeUrl: "https://www.youtube.com/@SuperSimpleSongs", roi: { emotional: 3, language: 2 }, series: "supersimple", seriesTitle: "Super Simple Songs", episode: 5 },
+
+            // ── Science & Nature ──
+            { id: "sb-ears", type: "screen", category: "Science", learn: "science", title: "StoryBots – How Do Ears Hear?", duration: 10, age: "2.5y", description: "Real questions, real answers — curiosity rewarded", montessori: "Science", icon: "fa-solid fa-ear-listen", youtubeUrl: "https://www.youtube.com/@StoryBots", roi: { language: 3, math: 1 }, series: "storybots", seriesTitle: "StoryBots", episode: 1, recall: true, kreme: true },
+            { id: "sb-planets", type: "screen", category: "Science", learn: "science", title: "StoryBots – Outer Space: The Planets", duration: 12, age: "2.5y", description: "A planet song they'll recite for months", montessori: "Science", icon: "fa-solid fa-planet-ringed", youtubeUrl: "https://www.youtube.com/@StoryBots", roi: { language: 3, memory: 3 }, series: "storybots", seriesTitle: "StoryBots", episode: 2 },
+            { id: "natgeo-animals", type: "screen", category: "Science", learn: "science", title: "Nat Geo Kids – Amazing Animals", duration: 8, age: "2.5y", description: "Real footage of real animals — vocabulary + wonder", montessori: "Science + Cultural", icon: "fa-solid fa-paw", youtubeUrl: "https://www.youtube.com/@NatGeoKids", roi: { language: 3, cultural: 3 } },
+            { id: "sss-weather", type: "screen", category: "Science", learn: "science", title: "Super Simple – How's the Weather?", duration: 8, age: "2.5y", description: "Daily observation habit — look outside and name it", montessori: "Science", icon: "fa-solid fa-cloud-sun-rain", youtubeUrl: "https://www.youtube.com/@SuperSimpleSongs", roi: { language: 3, sensorial: 2 }, series: "supersimple", seriesTitle: "Super Simple Songs", episode: 6 },
+
+            // ── Emotional & Social ──
+            { id: "sesame-breathe", type: "screen", category: "Emotional", learn: "emotional", title: "Sesame Street – Belly Breathe with Elmo", duration: 6, age: "2.5y", description: "THE self-regulation tool — practice calm before it's needed", montessori: "Emotional", icon: "fa-solid fa-wind", youtubeUrl: "https://www.youtube.com/@SesameStreet", roi: { emotional: 5 }, recall: true, kreme: true },
+            { id: "dt-mad", type: "screen", category: "Emotional", learn: "emotional", title: "Daniel Tiger – When You Feel So Mad", duration: 9, age: "2.5y", description: "A strategy song for anger — take a deep breath and count to four", montessori: "Emotional", icon: "fa-solid fa-face-angry", youtubeUrl: "https://www.youtube.com/@DanielTigersNeighborhood", roi: { emotional: 5, language: 2 }, series: "danieltiger", seriesTitle: "Daniel Tiger's Neighborhood", episode: 1, recall: true },
+            { id: "dt-sharing", type: "screen", category: "Emotional", learn: "emotional", title: "Daniel Tiger – Sharing & Taking Turns", duration: 10, age: "2.5y", description: "Social scripts kids replay at the playground", montessori: "Social", icon: "fa-solid fa-hands-holding-child", youtubeUrl: "https://www.youtube.com/@DanielTigersNeighborhood", roi: { social: 4, emotional: 3 }, series: "danieltiger", seriesTitle: "Daniel Tiger's Neighborhood", episode: 2 },
+
+            // ── Creativity & Art ──
+            { id: "afkh-puppy", type: "screen", category: "Creativity", learn: "creativity", title: "Art for Kids Hub – Draw a Puppy Together", duration: 12, age: "2.5y", description: "A dad drawing WITH his kids — do it alongside, paper out", montessori: "Art", icon: "fa-solid fa-paintbrush", youtubeUrl: "https://www.youtube.com/@Artforkidshub", roi: { motor: 3, emotional: 2, independence: 2 }, series: "artforkids", seriesTitle: "Art for Kids Hub", episode: 1, recall: true, kreme: true },
+            { id: "afkh-shapes", type: "screen", category: "Creativity", learn: "creativity", title: "Art for Kids Hub – Drawing with Shapes", duration: 9, age: "2.5y", description: "Circles and squares become anything — pre-writing motor control", montessori: "Art + Motor", icon: "fa-solid fa-shapes", youtubeUrl: "https://www.youtube.com/@Artforkidshub", roi: { motor: 4, math: 1 }, series: "artforkids", seriesTitle: "Art for Kids Hub", episode: 2 },
+            { id: "ssdraw-house", type: "screen", category: "Creativity", learn: "creativity", title: "Super Simple Draw – Draw a House", duration: 8, age: "2.5y", description: "Slow, followable drawing — pause and copy together", montessori: "Art", icon: "fa-solid fa-house-chimney", youtubeUrl: "https://www.youtube.com/@SuperSimpleDraw", roi: { motor: 3, independence: 2 } },
+
+            // ── Movement ──
+            { id: "dannygo-wiggle", type: "screen", category: "Movement", learn: "movement", title: "Danny Go! – Wiggle Dance-Along", duration: 10, age: "2.5y", description: "Full-body follow-along — burns energy, builds coordination", montessori: "Motor", icon: "fa-solid fa-child-reaching", youtubeUrl: "https://www.youtube.com/@DannyGo", roi: { motor: 5, emotional: 2 }, series: "dannygo", seriesTitle: "Danny Go!", episode: 1, recall: true },
+            { id: "kookoo-stomp", type: "screen", category: "Movement", learn: "movement", title: "Koo Koo – Dinosaur Stomp", duration: 7, age: "2.5y", description: "Gym-teacher favorite — big silly movements, zero self-consciousness", montessori: "Motor", icon: "fa-solid fa-shoe-prints", youtubeUrl: "https://www.youtube.com/@kookookangaroo", roi: { motor: 4, emotional: 2 } }
         ];
         
         let schedule = [];
@@ -2232,6 +2296,86 @@
             const el = document.getElementById('xp-counter');
             if (el) el.textContent = `${totalXp} XP`;
         }
+
+        // ════════════════════════════════════════════════════════════
+        // LEARNING MIX — every completion also banks its XP under a
+        // canonical learning category, so parents can see WHAT kind of
+        // learning is being consumed, not just how much. A lopsided mix
+        // is signal: heavy in one category = a strong like (lean into
+        // it); untouched categories = either a dislike worth easing
+        // into or a blind spot in the week's plan.
+        // ════════════════════════════════════════════════════════════
+        const DV_LEARN_CATS = [
+            { id: 'language',   label: 'Language',            icon: 'fa-comment',        color: '#0ea5e9' },
+            { id: 'math',       label: 'Math & Logic',        icon: 'fa-calculator',     color: '#8b5cf6' },
+            { id: 'music',      label: 'Music & Rhythm',      icon: 'fa-music',          color: '#ec4899' },
+            { id: 'movement',   label: 'Movement',            icon: 'fa-person-running', color: '#f59e0b' },
+            { id: 'science',    label: 'Science & Nature',    icon: 'fa-flask',          color: '#10b981' },
+            { id: 'creativity', label: 'Creativity & Art',    icon: 'fa-paintbrush',     color: '#d946ef' },
+            { id: 'emotional',  label: 'Emotional & Social',  icon: 'fa-heart',          color: '#ef4444' },
+            { id: 'practical',  label: 'Practical & Sensory', icon: 'fa-hand-sparkles',  color: '#78716c' }
+        ];
+        // Legacy `category` strings → canonical bucket (new items carry `learn` directly).
+        const DV_LEGACY_CAT_MAP = {
+            'Language': 'language', 'Math': 'math', 'Music': 'music',
+            'Movement': 'movement', 'Motor': 'movement', 'Outdoor': 'movement',
+            'Science': 'science', 'Creativity': 'creativity',
+            'Emotional': 'emotional', 'Social': 'emotional', 'Bonding': 'emotional',
+            'Practical Life': 'practical', 'Sensorial': 'practical'
+            // 'Dad Habit' + untagged customs intentionally absent — dad self-care
+            // earns total XP but isn't part of the KID learning mix.
+        };
+        function dvLearnCatId(item) {
+            if (!item) return null;
+            return item.learn || DV_LEGACY_CAT_MAP[item.category] || null;
+        }
+        function dvLoadCatXp() {
+            try { return JSON.parse(localStorage.getItem('dv_xp_cats') || '{}'); } catch (e) { return {}; }
+        }
+        function dvAddCatXp(catId, n) {
+            if (!catId || !n) return;
+            const m = dvLoadCatXp();
+            m[catId] = Math.max(0, (m[catId] || 0) + n);
+            localStorage.setItem('dv_xp_cats', JSON.stringify(m));
+            dvRenderLearnMix();
+        }
+        function dvRenderLearnMix() {
+            const host = document.getElementById('dv-learn-mix');
+            if (!host) return;
+            const m = dvLoadCatXp();
+            const total = DV_LEARN_CATS.reduce((s, c) => s + (m[c.id] || 0), 0);
+            const noteEl = document.getElementById('dv-learn-mix-note');
+            if (!total) {
+                host.innerHTML = `<div class="dv-lm-empty">Complete lessons and the mix fills in — every category tells you something.</div>`;
+                if (noteEl) noteEl.style.display = 'none';
+                return;
+            }
+            const max = Math.max(...DV_LEARN_CATS.map(c => m[c.id] || 0), 1);
+            const sorted = DV_LEARN_CATS.slice().sort((a, b) => (m[b.id] || 0) - (m[a.id] || 0));
+            host.innerHTML = sorted.map(c => {
+                const xp = m[c.id] || 0;
+                const pct = Math.round((xp / max) * 100);
+                const share = Math.round((xp / total) * 100);
+                return `
+                    <div class="dv-lm-row ${xp === 0 ? 'dv-lm-zero' : ''}">
+                        <div class="dv-lm-icon" style="background:${c.color}1a;color:${c.color};"><i class="fa-solid ${c.icon}"></i></div>
+                        <div class="dv-lm-main">
+                            <div class="dv-lm-top"><span class="dv-lm-name">${c.label}</span><span class="dv-lm-xp">${xp ? `${xp} XP · ${share}%` : '—'}</span></div>
+                            <div class="dv-lm-bar"><div class="dv-lm-fill" style="width:${pct}%;background:${c.color};"></div></div>
+                        </div>
+                    </div>`;
+            }).join('');
+            // The read: what they love, and what hasn't been touched.
+            if (noteEl) {
+                const top = sorted[0];
+                const zeros = sorted.filter(c => !(m[c.id] || 0));
+                let note = `<b>Loving:</b> ${top.label}`;
+                if (zeros.length) note += ` · <b>Untouched:</b> ${zeros.map(z => z.label).join(', ')}`;
+                noteEl.innerHTML = note;
+                noteEl.style.display = 'block';
+            }
+        }
+
         function dvFormatCountdown(ms) {
             const totalSec = Math.max(0, Math.ceil(ms / 1000));
             return `${Math.floor(totalSec / 60)}:${String(totalSec % 60).padStart(2, '0')}`;
@@ -2522,6 +2666,7 @@
         function renderDashboard() {
             dvRenderFamilyPill();
             if (typeof dvRenderWeekStrip === 'function') dvRenderWeekStrip();
+            if (typeof dvRenderLearnMix === 'function') dvRenderLearnMix();
             if (typeof dvRenderRecallCard === 'function') dvRenderRecallCard();
             // Greeting (personalized if we have a profile)
             const hour = new Date().getHours();
@@ -2782,6 +2927,7 @@
                             <div class="flex items-center gap-x-2">
                                 <span class="text-[10px] px-2 py-0.5 bg-[#f5f5f7] text-[#86868b] rounded-2xl">${ageLabel}</span>
                                 <span class="text-[10px] text-[#86868b]">${item.duration} min</span>
+                                ${(() => { const c = DV_LEARN_CATS.find(x => x.id === dvLearnCatId(item)); return c ? `<span class="text-[9px] px-2 py-0.5 rounded-2xl font-semibold" style="background:${c.color}1a;color:${c.color};"><i class="fa-solid ${c.icon}"></i> ${c.label}</span>` : ''; })()}
                             </div>
 
                             <div class="flex items-center gap-x-2">
@@ -2848,6 +2994,12 @@
                             </select>
                         </div>
                     </div>
+                    <div class="dv-av-field">
+                        <label class="dv-av-label">WHAT KIND OF LEARNING IS IT?</label>
+                        <select id="dv-av-learn" class="dv-av-input">
+                            ${DV_LEARN_CATS.map(c => `<option value="${c.id}">${c.label}</option>`).join('')}
+                        </select>
+                    </div>
                     <div class="dv-av-note"><i class="fa-solid fa-shield-heart"></i> You're approving this — Dad Village doesn't preview or screen YouTube links, so make sure you've watched it yourself first.</div>
                     <div class="dv-av-error" id="dv-av-error"></div>
                     <button class="dv-cta" style="width:100%;margin-top:14px;justify-content:center;" onclick="dvSubmitCustomVideo()"><i class="fa-solid fa-plus"></i> Add to library</button>
@@ -2876,10 +3028,12 @@
                 return;
             }
 
+            const learnEl = document.getElementById('dv-av-learn');
             const item = {
                 id: 'custom-' + Date.now().toString(36),
                 type: 'screen',
                 category: 'Custom',
+                learn: learnEl ? learnEl.value : null,
                 title,
                 duration: Math.min(120, duration),
                 age: ageEl.value,
@@ -3554,10 +3708,12 @@
                     const xp = dvXpFor(item, block.xpMode);
                     block.xpAwarded = xp;
                     dvAddXp(xp);
+                    dvAddCatXp(dvLearnCatId(item), xp); // bank it under its learning category too
                     if (typeof showProgressToast === 'function') showProgressToast(block.xpMode === 'challenge' ? `⚡ Challenge complete — +${xp} XP` : `+${xp} XP`);
                     delete block.challengeStartedAt; // consume it — a claim shouldn't stay re-claimable
                 } else if (block.xpAwarded) {
                     dvAddXp(-block.xpAwarded);
+                    dvAddCatXp(dvLearnCatId(item), -block.xpAwarded);
                     block.xpAwarded = 0;
                     block.xpMode = 'self'; // un-checking resets to neutral; earning 3x again requires a fresh challenge
                     delete block.challengeStartedAt;
