@@ -420,6 +420,10 @@
                             <span>Saved on this device</span>
                         </div>
                         <div class="dv-menu-divider"></div>
+                        <div class="dv-menu-section">DAD VILLAGE PRO</div>
+                        <div class="dv-menu-status" id="dv-premium-status"><i class="fa-solid fa-star" style="color:#c7c7cc"></i> Free plan</div>
+                        <div class="dv-menu-item" id="dv-premium-action" onclick="dvCloseMenus(); dvOpenUpgradeModal()">Upgrade to Pro — $0.99</div>
+                        <div class="dv-menu-divider"></div>
                         <div class="dv-menu-item" onclick="dvStartOnboarding(); dvCloseMenus()"><i class="fa-solid fa-wand-magic-sparkles"></i> Edit family &amp; setup</div>
                         <div class="dv-menu-divider"></div>
                         <div class="dv-menu-section">YOUR DATA</div>
@@ -887,6 +891,29 @@
             .dv-av-row { display: flex; gap: 10px; }
             .dv-av-error { font-size: 12px; color: #dc2626; margin-top: 8px; display: none; }
             .dv-av-note { font-size: 11px; color: #86868b; line-height: 1.5; background: #f8f9fa; border-radius: 10px; padding: 10px 12px; margin-top: 4px; }
+
+            /* ─── Premium / Free tier gating (2026-07-18) ─── */
+            .dv-pro-badge { display: inline-flex; align-items: center; gap: 4px; font-size: 9px; font-weight: 700; letter-spacing: 0.04em; color: #fff; background: linear-gradient(135deg,#ff9500,#ff3b30); padding: 3px 8px; border-radius: 999px; white-space: nowrap; }
+            .dv-pro-banner { display: flex; align-items: center; gap: 10px; justify-content: space-between; padding: 10px 14px; margin-bottom: 12px; border-radius: 14px; background: #fff7ed; border: 1px solid #fed7aa; font-size: 12px; font-weight: 600; color: #c2410f; }
+            .dv-pro-banner button { flex-shrink: 0; padding: 6px 14px; border: none; border-radius: 999px; background: linear-gradient(135deg,#ff9500,#ff3b30); color: #fff; font-size: 11px; font-weight: 700; cursor: pointer; }
+            .dv-locked-card { position: relative; }
+            .dv-locked-thumb { opacity: 0.45; filter: grayscale(0.4); }
+            /* Generic locked-panel — replaces a premium-only card's body */
+            .dv-locked-panel { grid-column: 1 / -1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; text-align: center; padding: 30px 16px; cursor: pointer; color: #86868b; border: 1.5px dashed #e5e5ea; border-radius: 16px; }
+            .dv-locked-panel:hover { border-color: #ffb84d; background: #fff9f2; }
+            .dv-locked-panel i.fa-lock { font-size: 20px; color: #ff9500; }
+            .dv-locked-panel-label { font-size: 13px; font-weight: 700; color: #1d1d1f; }
+            .dv-locked-panel-teaser { font-size: 11px; color: #86868b; max-width: 260px; }
+            .dv-locked-panel-cta { font-size: 11px; font-weight: 700; color: #ff9500; margin-top: 2px; }
+            /* Instant drag-and-drop handle on scheduled blocks — Pro perk on touch */
+            .dv-block-handle { flex-shrink: 0; width: 26px; height: 26px; border: none; background: transparent; color: #c7c7cc; cursor: grab; display: flex; align-items: center; justify-content: center; font-size: 13px; touch-action: none; position: relative; }
+            .dv-block-handle:active { cursor: grabbing; }
+            .dv-block-dad .dv-block-handle { color: rgba(255,255,255,0.4); }
+            .dv-block-handle.dv-locked { color: #e5e5ea; cursor: pointer; }
+            .dv-block-dad .dv-block-handle.dv-locked { color: rgba(255,255,255,0.2); }
+            .dv-block-handle.dv-locked::after { content: '\f023'; font-family: "Font Awesome 6 Free"; font-weight: 900; font-size: 6px; position: absolute; bottom: 1px; right: 1px; background: #ff9500; color: #fff; border-radius: 50%; width: 10px; height: 10px; display: flex; align-items: center; justify-content: center; }
+            /* Week-strip pips locked behind Pro (history for past days) */
+            .dv-week-pip.dv-week-pip-locked::after { content: '\f023'; font-family: "Font Awesome 6 Free"; font-weight: 900; font-size: 7px; color: #ff9500; margin-left: 3px; }
         </style>
 
         <!-- New compact Plan controls -->
@@ -921,7 +948,8 @@
                 <div id="dv-curr-filters-host" class="dv-curr-filters"></div>
                 <!-- Library search host (search input moved here) -->
                 <div id="dv-lib-search-host" class="dv-lib-search" style="display:none"></div>
-                <button id="dv-add-video-btn" class="dv-add-video-btn" style="display:none" onclick="dvOpenAddVideoModal()"><i class="fa-solid fa-plus"></i> Add your own YouTube video</button>
+                <div id="dv-lib-pro-banner" class="dv-pro-banner" style="display:none"></div>
+                <button id="dv-add-video-btn" class="dv-add-video-btn" style="display:none" onclick="dvHandleAddVideoClick()"><i class="fa-solid fa-plus"></i> Add your own YouTube video</button>
                 <!-- Source container — holds either the shelf or the library cards -->
                 <div id="dv-source-container" class="dv-source-container"></div>
             </section>
@@ -1163,7 +1191,7 @@
             </section>
 
             <!-- Card 0.5: Pillar balance this week -->
-            <section class="dv-kids-card">
+            <section class="dv-kids-card" id="dv-pillar-balance-card">
                 <div class="dv-kids-card-header">
                     <div>
                         <div class="dv-kids-eyebrow">PILLAR BALANCE · THIS WEEK</div>
@@ -1820,6 +1848,7 @@
             const searchHost = document.getElementById('dv-lib-search-host');
             const libFilters = document.getElementById('dv-lib-filters');
             const addVideoBtn = document.getElementById('dv-add-video-btn');
+            const proBanner = document.getElementById('dv-lib-pro-banner');
             const h2 = document.getElementById('dv-source-h2');
 
             const isCurr = mode === 'curr';
@@ -1829,8 +1858,25 @@
             if (filtersHost) filtersHost.style.display = isCurr ? 'flex' : 'none';
             if (searchHost) searchHost.style.display = isCurr ? 'none' : 'block';
             if (libFilters) libFilters.style.display = isCurr ? 'none' : 'flex';
-            if (addVideoBtn) addVideoBtn.style.display = isCurr ? 'none' : 'flex';
             if (h2) h2.textContent = isCurr ? "Today's curriculum" : 'Content library';
+
+            const pro = dvIsPremium();
+            if (addVideoBtn) {
+                addVideoBtn.style.display = isCurr ? 'none' : 'flex';
+                addVideoBtn.innerHTML = pro
+                    ? '<i class="fa-solid fa-plus"></i> Add your own YouTube video'
+                    : '<i class="fa-solid fa-lock"></i> Add your own YouTube video <span class="dv-pro-badge">PRO</span>';
+            }
+            if (proBanner) {
+                if (!isCurr && !pro) {
+                    const total = contentLibrary.length;
+                    const freeCount = contentLibrary.filter(dvItemIsFree).length;
+                    proBanner.style.display = 'flex';
+                    proBanner.innerHTML = `<span><i class="fa-solid fa-lock"></i> ${freeCount}/${total} videos unlocked on the free plan</span><button onclick="dvOpenUpgradeModal('The full library')">Unlock all</button>`;
+                } else {
+                    proBanner.style.display = 'none';
+                }
+            }
         }
 
         // ════════════════════════════════════════════════════════════
@@ -1893,7 +1939,9 @@
                 const state = isFuture ? 'future' : total === 0 ? 'empty' : done === total ? 'full' : done > 0 ? 'partial' : 'planned';
                 const dot = isFuture ? '' : total ? `${done}/${total}` : '';
                 const label = d.toLocaleDateString(undefined, { weekday: 'long', month: 'short', day: 'numeric' });
-                return `<button type="button" class="dv-week-pip dv-week-pip-${state}${isToday ? ' is-today' : ''}" ${isFuture ? 'disabled' : `onclick="dvOpenDayDetail('${key}')"`} title="${label}">
+                const locked = !isToday && !isFuture && !dvIsPremium();
+                const clickAttr = isFuture ? 'disabled' : locked ? `onclick="dvOpenUpgradeModal('Weekly history')"` : `onclick="dvOpenDayDetail('${key}')"`;
+                return `<button type="button" class="dv-week-pip dv-week-pip-${state}${isToday ? ' is-today' : ''}${locked ? ' dv-week-pip-locked' : ''}" ${clickAttr} title="${locked ? 'Weekly history — Pro feature' : label}">
                     <span class="dv-week-pip-letter">${DV_WEEK_LETTERS[i]}</span>
                     <span class="dv-week-pip-dot">${dot}</span>
                     <span class="dv-week-pip-num">${d.getDate()}</span>
@@ -1901,6 +1949,7 @@
             }).join('');
         }
         function dvOpenDayDetail(dateKey) {
+            if (dateKey !== dvLocalDateKey() && !dvIsPremium()) { dvOpenUpgradeModal('Weekly history'); return; }
             const blocks = dvBlocksForDate(dateKey) || [];
             const isToday = dateKey === dvLocalDateKey();
             const label = new Date(dateKey + 'T00:00:00').toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' });
@@ -2053,9 +2102,13 @@
             if (!host) return;
             const due = dvRecallDue();
             if (!due.length) { host.style.display = 'none'; return; }
+            host.style.display = 'block';
+            if (!dvIsPremium()) {
+                host.innerHTML = dvLockedPanelHTML('Spaced-Repetition Recall', `${due.length} item${due.length === 1 ? '' : 's'} due for a recall rep — Pro tracks the science-backed 1/2/4/7/14/30-day schedule for you.`);
+                return;
+            }
             const top = due[0];
             const more = due.length - 1;
-            host.style.display = 'block';
             host.innerHTML = `
                 <div class="dv-recall-eyebrow"><i class="fa-solid fa-rotate-right"></i> RECALL · LOCK IT IN</div>
                 <div class="dv-recall-title">${top.item.title}</div>
@@ -2098,6 +2151,7 @@
         function dvRenderPillarBalance() {
             const host = document.getElementById('dv-pillar-balance');
             if (!host || !window.DV_PILLARS) return;
+            if (!dvIsPremium()) { host.innerHTML = dvLockedPanelHTML('Pillar Balance', 'See which executive-function traits this week\'s lessons are actually building.'); return; }
             const counts = (window.__dvPillarWeek || dvLoadPillarWeek()).counts || {};
             const max = Math.max(1, ...window.DV_PILLARS.map(p => counts[p.id] || 0));
             const lean = dvLeanPillar();
@@ -2352,6 +2406,104 @@
             for (let i = 1; i <= 5; i++) stars += `<i class="fa-solid fa-star" style="color:${i <= n ? '#f59e0b' : '#e5e5ea'};"></i>`;
             return stars;
         }
+        // ════════════════════════════════════════════════════════════
+        // PREMIUM / FREE TIER — dv_premium is a local-only flag today;
+        // there's no payment processor wired up yet, so unlocking is a
+        // demo toggle (the seam for a future Stripe/IAP charge). The
+        // full 3-band daily curriculum always stays free — it's the
+        // habit-forming core loop. Pro unlocks the rest of the library,
+        // custom videos, instant drag-and-drop, challenges, and every
+        // history/analytics surface.
+        // ════════════════════════════════════════════════════════════
+        function dvIsPremium() { return localStorage.getItem('dv_premium') === '1'; }
+        function dvSetPremium(on) {
+            localStorage.setItem('dv_premium', on ? '1' : '0');
+            dvCloseUpgradeModal();
+            if (typeof renderContentLibrary === 'function') renderContentLibrary();
+            if (typeof renderCurriculumShelf === 'function') renderCurriculumShelf();
+            if (typeof renderSchedule === 'function') renderSchedule();
+            if (typeof renderDashboard === 'function') renderDashboard();
+            if (typeof dvRenderWeekStrip === 'function') dvRenderWeekStrip();
+            if (typeof dvRenderPillarBalance === 'function') dvRenderPillarBalance();
+            if (typeof dvRenderLearnMix === 'function') dvRenderLearnMix();
+            if (typeof renderDevelopmentMatrix === 'function') renderDevelopmentMatrix();
+            if (typeof renderWeeklyTargetTracker === 'function') renderWeeklyTargetTracker();
+            if (typeof dvRenderRecallCard === 'function') dvRenderRecallCard();
+            if (typeof dvPlanSubtab === 'function') { const active = document.querySelector('.dv-subtab.active'); dvPlanSubtab(active ? active.dataset.subtab : 'curr'); }
+            dvUpdateAccountPremiumUI();
+            if (typeof showProgressToast === 'function') showProgressToast(on ? '⭐ Dad Village Pro unlocked' : 'Back to the free plan');
+        }
+        const DV_PRO_PERKS = [
+            ['fa-layer-group', 'The full curated library (free plan shows a starter set)'],
+            ['fa-hand-pointer', 'Instant drag-and-drop — grab any scheduled block and retime it in one motion'],
+            ['fa-video', 'Add your own YouTube videos to the schedule'],
+            ['fa-bolt', 'Accountability Challenges — earn 3x XP for real completed time'],
+            ['fa-calendar-week', 'Weekly history, Learning Mix, pillar balance & development tracking'],
+        ];
+        function dvOpenUpgradeModal(reason) {
+            dvCloseMenus();
+            dvCloseUpgradeModal();
+            const modal = document.createElement('div');
+            modal.id = 'dv-upgrade-modal';
+            modal.className = 'fixed inset-0 bg-black/70 z-[300] flex items-center justify-center p-4';
+            modal.onclick = e => { if (e.target === modal) dvCloseUpgradeModal(); };
+            modal.innerHTML = `
+                <div class="bg-white rounded-3xl p-6 w-full max-w-sm" onclick="event.stopPropagation()">
+                    <div style="width:52px;height:52px;border-radius:16px;background:linear-gradient(135deg,#ff9500,#ff3b30);display:flex;align-items:center;justify-content:center;color:#fff;font-size:22px;margin-bottom:14px;"><i class="fa-solid fa-star"></i></div>
+                    <div style="font-size:20px;font-weight:700;letter-spacing:-0.02em;margin-bottom:4px;">Dad Village Pro</div>
+                    <div style="font-size:13px;color:#86868b;margin-bottom:14px;">${reason ? reason + ' is a Pro feature. ' : ''}Unlock everything for one low price.</div>
+                    <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:18px;">
+                        ${DV_PRO_PERKS.map(([icon, text]) => `<div style="display:flex;gap:10px;align-items:flex-start;font-size:13px;color:#1d1d1f;"><i class="fa-solid ${icon}" style="color:#ff9500;width:16px;margin-top:2px;"></i><span>${text}</span></div>`).join('')}
+                    </div>
+                    <button onclick="dvSetPremium(true)" style="width:100%;padding:14px;border:none;border-radius:14px;background:linear-gradient(135deg,#ff9500,#ff3b30);color:#fff;font-size:15px;font-weight:700;cursor:pointer;">Unlock Pro — $0.99</button>
+                    <div style="font-size:10px;color:#c7c7cc;text-align:center;margin-top:8px;">Demo unlock — no payment is charged yet</div>
+                    <button onclick="dvCloseUpgradeModal()" style="width:100%;padding:10px;border:none;background:none;color:#86868b;font-size:13px;cursor:pointer;margin-top:2px;">Not now</button>
+                </div>`;
+            document.body.appendChild(modal);
+        }
+        function dvCloseUpgradeModal() {
+            const el = document.getElementById('dv-upgrade-modal'); if (el) el.remove();
+        }
+        function dvUpdateAccountPremiumUI() {
+            const statusEl = document.getElementById('dv-premium-status');
+            const actionEl = document.getElementById('dv-premium-action');
+            if (!statusEl || !actionEl) return;
+            const pro = dvIsPremium();
+            statusEl.innerHTML = pro
+                ? '<i class="fa-solid fa-star" style="color:#ff9500"></i> Dad Village Pro — active'
+                : '<i class="fa-solid fa-star" style="color:#c7c7cc"></i> Free plan';
+            actionEl.textContent = pro ? 'Manage (test toggle — turn Pro off)' : 'Upgrade to Pro — $0.99';
+            actionEl.onclick = pro ? () => dvSetPremium(false) : () => { dvCloseMenus(); dvOpenUpgradeModal(); };
+        }
+        // Generic locked-panel markup — used to replace a premium-only card's
+        // rendered body in place, so each render function stays authoritative
+        // (no separate overlay DOM to fall out of sync on the next re-render).
+        function dvLockedPanelHTML(label, teaser) {
+            return `<div class="dv-locked-panel" onclick="dvOpenUpgradeModal(${JSON.stringify(label)})">
+                <i class="fa-solid fa-lock"></i>
+                <div class="dv-locked-panel-label">${label}</div>
+                ${teaser ? `<div class="dv-locked-panel-teaser">${teaser}</div>` : ''}
+                <div class="dv-locked-panel-cta">Unlock with Dad Village Pro →</div>
+            </div>`;
+        }
+
+        // ─── Content library: free plan shows a curated starter set spanning
+        // every major category/channel; the rest (plus custom video adding)
+        // is Pro. The daily curriculum shelf is untouched by this — it's
+        // always free regardless of which library item backs a lesson. ───
+        const DV_FREE_LIBRARY_IDS = new Set([
+            'ms-rachel-morning', 'gracies-corner', 'cosmic-kids-yoga', 'practical-pouring',
+            'read-aloud', 'dad-journal', 'newborn-tummy', 'toddler-stacking',
+            'nb-meet-numbers', 'ab-first-sounds', 'sesame-count', 'dt-mad',
+            'audio-lullaby', 'dad-bonding'
+        ]);
+        function dvItemIsFree(item) { return !item.custom && DV_FREE_LIBRARY_IDS.has(item.id); }
+        function dvItemLocked(item) { return !dvIsPremium() && !dvItemIsFree(item); }
+        function dvHandleAddVideoClick() {
+            if (dvIsPremium()) dvOpenAddVideoModal();
+            else dvOpenUpgradeModal('Adding your own videos');
+        }
+
         function dvLoadCatXp() {
             try { return JSON.parse(localStorage.getItem('dv_xp_cats') || '{}'); } catch (e) { return {}; }
         }
@@ -2365,9 +2517,14 @@
         function dvRenderLearnMix() {
             const host = document.getElementById('dv-learn-mix');
             if (!host) return;
+            const noteEl = document.getElementById('dv-learn-mix-note');
+            if (!dvIsPremium()) {
+                host.innerHTML = dvLockedPanelHTML('Learning Mix', 'See what kind of learning your kid is loving — and what\'s untouched.');
+                if (noteEl) noteEl.style.display = 'none';
+                return;
+            }
             const m = dvLoadCatXp();
             const total = DV_LEARN_CATS.reduce((s, c) => s + (m[c.id] || 0), 0);
-            const noteEl = document.getElementById('dv-learn-mix-note');
             if (!total) {
                 host.innerHTML = `<div class="dv-lm-empty">Complete lessons and the mix fills in — every category tells you something.</div>`;
                 if (noteEl) noteEl.style.display = 'none';
@@ -2405,6 +2562,7 @@
         }
         function dvStartChallenge(blockId, e) {
             if (e) e.stopImmediatePropagation();
+            if (!dvIsPremium()) { dvOpenUpgradeModal('Accountability Challenges'); return; }
             const block = schedule.find(b => b.id === blockId);
             if (!block || block.completed) return;
             block.challengeStartedAt = Date.now();
@@ -2860,6 +3018,7 @@
             }
 
             // Render everything once, in order
+            dvUpdateAccountPremiumUI();
             renderContentLibrary();
             renderSchedule();
             setupSearch();
@@ -2918,15 +3077,16 @@
             items = items.slice().sort((a, b) => (b.activeScore || 0) - (a.activeScore || 0));
 
             items.forEach(item => {
+                const locked = dvItemLocked(item);
                 const card = document.createElement('div');
-                card.className = `premium-card bg-white border border-[#e5e5ea] rounded-3xl p-4 flex gap-4 cursor-grab draggable`;
-                card.draggable = true;
+                card.className = `premium-card bg-white border border-[#e5e5ea] rounded-3xl p-4 flex gap-4 ${locked ? 'dv-locked-card' : 'cursor-grab draggable'}`;
+                card.draggable = !locked;
                 card.dataset.id = item.id;
-                
+
                 const ageLabel = item.age === 'Both' ? 'Both kids' : item.age === 'Dad' ? 'Dad only' : item.age;
-                
+
                 let kremeBadge = item.kreme ? `<span class="text-[9px] px-2 py-0.5 bg-[#fff7ed] text-[#c2410f] rounded-2xl font-semibold tracking-wider">KREME OF THE CROP</span>` : '';
-                
+
                 let roiHTML = '';
                 if (item.roi) {
                     roiHTML = `<div class="flex flex-wrap gap-1 mt-2">`;
@@ -2935,18 +3095,22 @@
                     });
                     roiHTML += `</div>`;
                 }
-                
-                let watchHTML = item.youtubeUrl ?
+
+                let watchHTML = (!locked && item.youtubeUrl) ?
                     `<button onclick="watchVideo('${item.youtubeUrl}', event)" class="text-xs px-3 py-1 bg-[#ff3b30] text-white rounded-2xl flex items-center gap-x-1.5 hover:bg-red-600"><i class="fa-brands fa-youtube text-xs"></i><span class="font-medium text-[10px]">Watch</span></button>` : '';
-                let removeHTML = item.custom ?
+                let removeHTML = (!locked && item.custom) ?
                     `<button onclick="dvRemoveCustomVideo('${item.id}', event)" class="dv-custom-remove" title="Remove from your library"><i class="fa-solid fa-trash"></i></button>` : '';
+                let addBtnHTML = locked
+                    ? `<button onclick="dvOpenUpgradeModal('This video')" class="text-xs px-3 py-1 rounded-2xl font-medium dv-pro-badge" style="border:none;"><i class="fa-solid fa-lock"></i> Unlock</button>`
+                    : `<button onclick="quickAddToSchedule('${item.id}', event)" class="text-xs px-3 py-1 bg-black text-white rounded-2xl font-medium">Add</button>`;
 
                 card.innerHTML = `
-                    <div class="flex-shrink-0 w-10 h-10 bg-[#f5f5f7] text-[#1d1d1f] rounded-2xl flex items-center justify-center"><i class="${item.icon} text-lg"></i></div>
+                    <div class="flex-shrink-0 w-10 h-10 bg-[#f5f5f7] text-[#1d1d1f] rounded-2xl flex items-center justify-center ${locked ? 'dv-locked-thumb' : ''}"><i class="${item.icon} text-lg"></i></div>
                     <div class="flex-1 min-w-0">
                         <div class="font-semibold leading-tight">${item.title}</div>
                         ${item.kreme ? `<div class="mt-1"><span class="text-[9px] px-2 py-px bg-[#fff7ed] text-[#c2410f] rounded-2xl font-semibold tracking-wider">KREME OF THE CROP</span></div>` : ''}
                         ${item.custom ? `<div class="mt-1"><span class="dv-custom-badge">YOURS</span></div>` : ''}
+                        ${locked ? `<div class="mt-1"><span class="dv-pro-badge"><i class="fa-solid fa-lock"></i> PRO</span></div>` : ''}
                         ${item.activeScore ? `<div class="dv-active-score" title="Active Learning Score — Dad Village's own editorial rating">${dvStarRow(item.activeScore)}<span class="dv-active-credential">${item.credential || ''}</span></div>` : ''}
                         <div class="text-xs text-[#86868b] mt-1 line-clamp-2">${item.description}</div>
 
@@ -2960,17 +3124,19 @@
                             <div class="flex items-center gap-x-2">
                                 ${removeHTML}
                                 ${watchHTML}
-                                <button onclick="quickAddToSchedule('${item.id}', event)" class="text-xs px-3 py-1 bg-black text-white rounded-2xl font-medium">Add</button>
+                                ${addBtnHTML}
                             </div>
                         </div>
 
                         ${roiHTML}
                     </div>
                 `;
-                
-                card.addEventListener('dragstart', e => { e.dataTransfer.setData('text/plain', item.id); card.style.opacity = '0.4'; });
-                card.addEventListener('dragend', () => card.style.opacity = '1');
-                dvAttachTouchDrag(card, item.id);
+
+                if (!locked) {
+                    card.addEventListener('dragstart', e => { e.dataTransfer.setData('text/plain', item.id); card.style.opacity = '0.4'; });
+                    card.addEventListener('dragend', () => card.style.opacity = '1');
+                    dvAttachTouchDrag(card, item.id);
+                }
                 container.appendChild(card);
             });
         }
@@ -3368,14 +3534,22 @@
                             } else {
                                 const xpTag = block.completed && block.xpMode === 'challenge' ? `<span class="dv-xp-tag"><i class="fa-solid fa-bolt"></i> ${block.xpAwarded || challengeXp} XP</span>` : '';
                                 metaRow = `<div class="dv-block-meta">${item.duration} min · ${item.age}${xpTag}</div>`;
-                                const challengeBtn = !block.completed ? `<button class="dv-block-icon dv-block-challenge" onclick="dvStartChallenge('${block.id}', event)" title="Start accountability challenge — unlock ${challengeXp} XP"><i class="fa-solid fa-stopwatch"></i></button>` : '';
+                                const challengeBtn = !block.completed
+                                    ? (dvIsPremium()
+                                        ? `<button class="dv-block-icon dv-block-challenge" onclick="dvStartChallenge('${block.id}', event)" title="Start accountability challenge — unlock ${challengeXp} XP"><i class="fa-solid fa-stopwatch"></i></button>`
+                                        : `<button class="dv-block-icon dv-block-challenge" onclick="event.stopImmediatePropagation(); dvOpenUpgradeModal('Accountability Challenges')" title="Accountability Challenge — Pro feature"><i class="fa-solid fa-lock"></i></button>`)
+                                    : '';
                                 actions = `${watch}
                                     ${challengeBtn}
                                     <button class="dv-block-icon dv-block-check" onclick="markComplete('${block.id}', event)" title="${block.completed ? 'Mark not done' : 'Mark done'}"><i class="fa-solid ${checkIcon}"></i></button>
                                     <button class="dv-block-icon dv-block-remove" onclick="removeBlock('${block.id}', event)" title="Remove"><i class="fa-solid fa-xmark"></i></button>`;
                             }
 
+                            const handlePro = dvIsPremium();
+                            const handleHTML = `<button type="button" class="dv-block-handle${handlePro ? '' : ' dv-locked'}" data-block-id="${block.id}" title="${handlePro ? 'Drag to move' : 'Instant drag — Pro feature'}"><i class="fa-solid fa-grip-vertical"></i></button>`;
+
                             return `<div class="schedule-block ${typeClass} ${doneClass}${addedClass}${challengeRunning || challengeReady ? ' challenge-active' : ''}" data-block-id="${block.id}" draggable="true" ondragstart="dvBlockDragStart(event, '${block.id}')" ondragend="dvBlockDragEnd(event)">
+                                ${handleHTML}
                                 <div class="dv-block-body">
                                     <div class="dv-block-title">${item.title}</div>
                                     ${metaRow}
@@ -3405,6 +3579,7 @@
             });
 
             enableMobileSwipe();
+            dvWireBlockHandles();
             updateStats();
             dvEnsureNowLineTicker();
 
@@ -3542,6 +3717,62 @@
                 cleanup();
             });
             card.addEventListener('pointercancel', cleanup);
+        }
+
+        // ─── Instant drag-and-drop handle (Pro perk, 2026-07-18) ───
+        // The free tier's only way to retime a scheduled block on touch is the
+        // long-press-to-lift gesture above (220ms arm + jitter check, shared
+        // with swipe-to-complete/delete on the same element) — reliable, but
+        // it makes you wait and hold still. This handle is a dedicated,
+        // unambiguous hit-zone: since `.dv-block-handle` is a <button>, the
+        // block's own gesture listener already ignores it via
+        // `e.target.closest('button')`, so there's zero risk of the two
+        // gestures racing. A drag starts the instant a Pro dad's finger
+        // touches the handle — no arm timer, no jitter gate needed.
+        function dvWireBlockHandles() {
+            document.querySelectorAll('.dv-block-handle').forEach(handle => {
+                const block = handle.closest('.schedule-block');
+                const blockId = handle.dataset.blockId;
+                if (!block || !blockId) return;
+
+                handle.addEventListener('click', e => {
+                    if (!dvIsPremium()) { e.stopPropagation(); dvOpenUpgradeModal('Instant drag-and-drop'); }
+                });
+
+                let active = false, ghost = null, lastHourRow = null;
+                handle.addEventListener('pointerdown', e => {
+                    if (e.pointerType !== 'touch' || !dvIsPremium()) return;
+                    e.stopPropagation(); e.preventDefault();
+                    active = true;
+                    block.classList.add('dv-touch-lifting');
+                    if (navigator.vibrate) navigator.vibrate(8);
+                    ghost = dvCreateDragGhost(block, e.clientX, e.clientY);
+                });
+                handle.addEventListener('pointermove', e => {
+                    if (!active) return;
+                    e.preventDefault();
+                    dvMoveDragGhost(ghost, e.clientX, e.clientY);
+                    const row = dvHourRowAt(e.clientX, e.clientY);
+                    if (row !== lastHourRow) {
+                        if (lastHourRow) lastHourRow.classList.remove('drag-over');
+                        if (row) row.classList.add('drag-over');
+                        lastHourRow = row;
+                    }
+                    dvAutoScrollCheck(e.clientY);
+                });
+                const finishDrag = e => {
+                    if (!active) return;
+                    active = false;
+                    const row = dvHourRowAt(e.clientX, e.clientY);
+                    if (row) dvMoveBlockToHour(blockId, parseInt(row.dataset.hour, 10));
+                    if (ghost) { ghost.remove(); ghost = null; }
+                    if (lastHourRow) { lastHourRow.classList.remove('drag-over'); lastHourRow = null; }
+                    block.classList.remove('dv-touch-lifting');
+                    dvStopAutoScroll();
+                };
+                handle.addEventListener('pointerup', finishDrag);
+                handle.addEventListener('pointercancel', finishDrag);
+            });
         }
 
         function enableMobileSwipe() {
@@ -3848,7 +4079,8 @@
             const container = document.getElementById('development-matrix');
             if (!container) return;
             container.innerHTML = '';
-            
+            if (!dvIsPremium()) { container.innerHTML = dvLockedPanelHTML('Development Tracking', 'Track language, independence, emotional, motor & bonding progress over time.'); return; }
+
             const areas = [
                 { key: 'language', label: 'Language', icon: 'fa-comments', color: '#3b82f6' },
                 { key: 'independence', label: 'Independence', icon: 'fa-user-check', color: '#10b981' },
@@ -3902,7 +4134,8 @@
         function renderWeeklyTargetTracker() {
             const container = document.getElementById('weekly-targets-tracker');
             if (!container) return;
-            
+            if (!dvIsPremium()) { container.innerHTML = dvLockedPanelHTML('Weekly Target Tracker', 'See Kreme Standard targets vs. what actually happened this week.'); return; }
+
             const targets = {
                 language: { label: "Language", unit: "min", target: 180, current: weeklyTargetProgress.language },
                 independence: { label: "Independence", unit: "sessions", target: 12, current: weeklyTargetProgress.independence },
