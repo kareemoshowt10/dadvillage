@@ -914,6 +914,18 @@
             .dv-block-handle.dv-locked::after { content: '\f023'; font-family: "Font Awesome 6 Free"; font-weight: 900; font-size: 6px; position: absolute; bottom: 1px; right: 1px; background: #ff9500; color: #fff; border-radius: 50%; width: 10px; height: 10px; display: flex; align-items: center; justify-content: center; }
             /* Week-strip pips locked behind Pro (history for past days) */
             .dv-week-pip.dv-week-pip-locked::after { content: '\f023'; font-family: "Font Awesome 6 Free"; font-weight: 900; font-size: 7px; color: #ff9500; margin-left: 3px; }
+
+            /* ─── Learning-category filter chips (2026-07-21) — active color is set
+               inline per-chip via filterByType() from DV_LEARN_CATS, not CSS. ─── */
+            .cat-chip { background: #fff; border-color: #e5e5ea !important; color: #86868b; display: inline-flex; align-items: center; gap: 6px; }
+            .cat-chip:hover { border-color: #d2d2d7 !important; }
+            .cat-chip i { font-size: 11px; }
+
+            /* ─── Instant drag handle on source cards (library + curriculum) — no premium gate,
+               this is the base "add to schedule" flow, not the retime-an-existing-block one. ─── */
+            .dv-source-handle { flex-shrink: 0; width: 26px; height: 26px; border: none; background: transparent; color: #c7c7cc; cursor: grab; display: flex; align-items: center; justify-content: center; font-size: 13px; touch-action: none; }
+            .dv-source-handle:active { cursor: grabbing; color: #86868b; }
+            .cs-card .dv-source-handle { margin-left: auto; }
         </style>
 
         <!-- New compact Plan controls -->
@@ -1083,7 +1095,19 @@
                         <div onclick="filterByType('dad')" class="filter-btn px-6 py-2 text-sm font-medium rounded-full border border-[#e5e5e5] hover:bg-[#fafafa] cursor-pointer whitespace-nowrap" data-type="dad">Dad</div>
                         <div onclick="filterByType('toprated')" class="filter-btn px-6 py-2 text-sm font-medium rounded-full border border-[#e5e5e5] hover:bg-[#fafafa] cursor-pointer whitespace-nowrap text-amber-600" data-type="toprated">★ Top Rated</div>
                     </div>
-                    
+
+                    <!-- Learning-category filters — a second, distinct facet from the row above (curation flags vs. subject/type) -->
+                    <div class="flex gap-x-2 mb-8 overflow-x-auto pb-2" id="dv-cat-filters">
+                        <div onclick="filterByType('language')" class="filter-btn cat-chip px-4 py-2 text-xs font-semibold rounded-full border cursor-pointer whitespace-nowrap" data-type="language"><i class="fa-solid fa-comment"></i> Language</div>
+                        <div onclick="filterByType('math')" class="filter-btn cat-chip px-4 py-2 text-xs font-semibold rounded-full border cursor-pointer whitespace-nowrap" data-type="math"><i class="fa-solid fa-calculator"></i> Math &amp; Logic</div>
+                        <div onclick="filterByType('music')" class="filter-btn cat-chip px-4 py-2 text-xs font-semibold rounded-full border cursor-pointer whitespace-nowrap" data-type="music"><i class="fa-solid fa-music"></i> Music &amp; Rhythm</div>
+                        <div onclick="filterByType('movement')" class="filter-btn cat-chip px-4 py-2 text-xs font-semibold rounded-full border cursor-pointer whitespace-nowrap" data-type="movement"><i class="fa-solid fa-person-running"></i> Movement</div>
+                        <div onclick="filterByType('science')" class="filter-btn cat-chip px-4 py-2 text-xs font-semibold rounded-full border cursor-pointer whitespace-nowrap" data-type="science"><i class="fa-solid fa-flask"></i> Science &amp; Nature</div>
+                        <div onclick="filterByType('creativity')" class="filter-btn cat-chip px-4 py-2 text-xs font-semibold rounded-full border cursor-pointer whitespace-nowrap" data-type="creativity"><i class="fa-solid fa-paintbrush"></i> Creativity &amp; Art</div>
+                        <div onclick="filterByType('emotional')" class="filter-btn cat-chip px-4 py-2 text-xs font-semibold rounded-full border cursor-pointer whitespace-nowrap" data-type="emotional"><i class="fa-solid fa-heart"></i> Emotional &amp; Social</div>
+                        <div onclick="filterByType('practical')" class="filter-btn cat-chip px-4 py-2 text-xs font-semibold rounded-full border cursor-pointer whitespace-nowrap" data-type="practical"><i class="fa-solid fa-hand-sparkles"></i> Practical &amp; Sensory</div>
+                    </div>
+
                     <div class="space-y-4 max-h-[620px] overflow-y-auto pr-2" id="content-library"></div>
                 </div>
                 
@@ -1837,6 +1861,15 @@
                     filterRow.style.display = 'none'; // hidden until library sub-tab active
                 }
             }
+
+            // Relocate the learning-category filter row the same way, right after it.
+            const catFilters = document.getElementById('dv-cat-filters');
+            if (catFilters) {
+                catFilters.style.marginBottom = '12px';
+                catFilters.style.flexWrap = 'wrap';
+                searchHost.parentNode.insertBefore(catFilters, sourceContainer);
+                catFilters.style.display = 'none'; // hidden until library sub-tab active
+            }
         }
 
         function dvPlanSubtab(mode) {
@@ -1847,6 +1880,7 @@
             const filtersHost = document.getElementById('dv-curr-filters-host');
             const searchHost = document.getElementById('dv-lib-search-host');
             const libFilters = document.getElementById('dv-lib-filters');
+            const catFilters = document.getElementById('dv-cat-filters');
             const addVideoBtn = document.getElementById('dv-add-video-btn');
             const proBanner = document.getElementById('dv-lib-pro-banner');
             const h2 = document.getElementById('dv-source-h2');
@@ -1858,6 +1892,7 @@
             if (filtersHost) filtersHost.style.display = isCurr ? 'flex' : 'none';
             if (searchHost) searchHost.style.display = isCurr ? 'none' : 'block';
             if (libFilters) libFilters.style.display = isCurr ? 'none' : 'flex';
+            if (catFilters) catFilters.style.display = isCurr ? 'none' : 'flex';
             if (h2) h2.textContent = isCurr ? "Today's curriculum" : 'Content library';
 
             const pro = dvIsPremium();
@@ -3070,6 +3105,7 @@
                         return favs.includes(i.id);
                     }
                     if (currentFilter === 'toprated') return (i.activeScore || 0) >= 4;
+                    if (DV_LEARN_CATS.some(c => c.id === currentFilter)) return dvLearnCatId(i) === currentFilter;
                     return true;
                 });
             }
@@ -3105,6 +3141,7 @@
                     : `<button onclick="quickAddToSchedule('${item.id}', event)" class="text-xs px-3 py-1 bg-black text-white rounded-2xl font-medium">Add</button>`;
 
                 card.innerHTML = `
+                    ${!locked ? `<button type="button" class="dv-source-handle" title="Drag to add to your schedule"><i class="fa-solid fa-grip-vertical"></i></button>` : ''}
                     <div class="flex-shrink-0 w-10 h-10 bg-[#f5f5f7] text-[#1d1d1f] rounded-2xl flex items-center justify-center ${locked ? 'dv-locked-thumb' : ''}"><i class="${item.icon} text-lg"></i></div>
                     <div class="flex-1 min-w-0">
                         <div class="font-semibold leading-tight">${item.title}</div>
@@ -3135,7 +3172,7 @@
                 if (!locked) {
                     card.addEventListener('dragstart', e => { e.dataTransfer.setData('text/plain', item.id); card.style.opacity = '0.4'; });
                     card.addEventListener('dragend', () => card.style.opacity = '1');
-                    dvAttachTouchDrag(card, item.id);
+                    dvAttachTouchDrag(card, item.id, card.querySelector('.dv-source-handle'));
                 }
                 container.appendChild(card);
             });
@@ -3263,17 +3300,27 @@
         function filterByType(type) {
             currentFilter = type;
             document.querySelectorAll('.filter-btn').forEach(el => {
-                el.classList.remove('bg-black', 'text-white');
-                el.classList.add('bg-white', 'border', 'border-[#d2d2d7]');
+                const cat = DV_LEARN_CATS.find(c => c.id === el.dataset.type);
+                el.classList.remove('bg-black', 'text-white', 'bg-[#fff7ed]', 'text-[#c2410f]', 'border-[#fed7aa]', 'bg-rose-50', 'text-rose-500', 'border-rose-200');
+                el.style.background = ''; el.style.color = ''; el.style.borderColor = '';
+                if (cat) el.classList.remove('bg-white', 'border', 'border-[#d2d2d7]');
+                else el.classList.add('bg-white', 'border', 'border-[#d2d2d7]');
+
                 if (el.dataset.type === type) {
-                    if (type === 'kreme' || type === 'toprated') {
+                    if (cat) {
+                        el.style.background = cat.color + '1a';
+                        el.style.color = cat.color;
+                        el.style.borderColor = cat.color;
+                    } else if (type === 'kreme' || type === 'toprated') {
                         el.classList.add('bg-[#fff7ed]', 'text-[#c2410f]', 'border-[#fed7aa]');
+                        el.classList.remove('bg-white', 'border', 'border-[#d2d2d7]');
                     } else if (type === 'favorites') {
                         el.classList.add('bg-rose-50', 'text-rose-500', 'border-rose-200');
+                        el.classList.remove('bg-white', 'border', 'border-[#d2d2d7]');
                     } else {
                         el.classList.add('bg-black', 'text-white');
+                        el.classList.remove('bg-white', 'border', 'border-[#d2d2d7]');
                     }
-                    el.classList.remove('bg-white', 'border', 'border-[#d2d2d7]');
                 }
             });
             renderContentLibrary();
@@ -3423,7 +3470,7 @@
                             ${formatBadge}
                             ${isRecall ? '<span class="cs-badge cs-badge-recall"><i class="fa-solid fa-rotate-right"></i> RECALL</span>' : ''}
                         </div>
-                        <span class="cs-duration">${lesson.duration} min</span>
+                        <span style="display:flex;align-items:center;gap:4px;"><span class="cs-duration">${lesson.duration} min</span>${draggable ? `<button type="button" class="dv-source-handle" title="Drag to add to your schedule"><i class="fa-solid fa-grip-vertical"></i></button>` : ''}</span>
                     </div>
                     <div class="cs-name">${lesson.title}</div>
                     ${backed && backed.activeScore ? `<div class="dv-active-score" title="Active Learning Score — Dad Village's own editorial rating">${dvStarRow(backed.activeScore)}<span class="dv-active-credential">${backed.credential || ''}</span></div>` : ''}
@@ -3450,7 +3497,7 @@
                         trackEvent && trackEvent('curriculum_lesson_dragged', { lessonId: lesson.id });
                     });
                     card.addEventListener('dragend', () => card.classList.remove('dv-dragging'));
-                    dvAttachTouchDrag(card, primaryRef);
+                    dvAttachTouchDrag(card, primaryRef, card.querySelector('.dv-source-handle'));
                 }
 
                 shelf.appendChild(card);
@@ -3663,7 +3710,11 @@
         }
 
         // Long-press-to-drag for source cards (curriculum shelf + content library).
-        function dvAttachTouchDrag(card, contentId) {
+        // If a `handle` element is passed (the small grip icon on the card), touching
+        // it directly starts the drag instantly instead of waiting out the arm timer —
+        // same trick as the schedule-block retime handle, but unlocked for everyone
+        // here since this is the base add-to-schedule flow, not a premium perk.
+        function dvAttachTouchDrag(card, contentId, handle) {
             let tracking = false, armed = false, startX = 0, startY = 0, armTimer = null, ghost = null, lastHourRow = null;
 
             function cleanup() {
@@ -3674,21 +3725,14 @@
                 card.classList.remove('dv-touch-lifting');
                 dvStopAutoScroll();
             }
-
-            card.addEventListener('pointerdown', e => {
-                if (e.pointerType !== 'touch') return;
-                if (e.target.closest('button')) return; // don't hijack Add/Watch taps
-                tracking = true; armed = false;
-                startX = e.clientX; startY = e.clientY;
-                armTimer = setTimeout(() => {
-                    armed = true; armTimer = null;
-                    card.classList.add('dv-touch-lifting');
-                    if (navigator.vibrate) navigator.vibrate(8);
-                    ghost = dvCreateDragGhost(card, e.clientX, e.clientY);
-                }, DV_DRAG_ARM_MS);
-            }, { passive: true });
-
-            card.addEventListener('pointermove', e => {
+            function beginDrag(x, y) {
+                armed = true;
+                if (armTimer) { clearTimeout(armTimer); armTimer = null; }
+                card.classList.add('dv-touch-lifting');
+                if (navigator.vibrate) navigator.vibrate(8);
+                ghost = dvCreateDragGhost(card, x, y);
+            }
+            function onMove(e) {
                 if (e.pointerType !== 'touch' || !tracking) return;
                 if (!armed) {
                     if (Math.abs(e.clientX - startX) > DV_DRAG_JITTER_PX || Math.abs(e.clientY - startY) > DV_DRAG_JITTER_PX) {
@@ -3706,17 +3750,39 @@
                     lastHourRow = row;
                 }
                 dvAutoScrollCheck(e.clientY);
-            }, { passive: false });
-
-            card.addEventListener('pointerup', e => {
+            }
+            function onUp(e) {
                 if (e.pointerType !== 'touch' || !tracking) return;
                 if (armed) {
                     const row = dvHourRowAt(e.clientX, e.clientY);
                     if (row) addBlockToSchedule(contentId, parseInt(row.dataset.hour, 10));
                 }
                 cleanup();
-            });
+            }
+
+            card.addEventListener('pointerdown', e => {
+                if (e.pointerType !== 'touch') return;
+                if (e.target.closest('button')) return; // don't hijack Add/Watch/handle taps
+                tracking = true; armed = false;
+                startX = e.clientX; startY = e.clientY;
+                armTimer = setTimeout(() => beginDrag(e.clientX, e.clientY), DV_DRAG_ARM_MS);
+            }, { passive: true });
+            card.addEventListener('pointermove', onMove, { passive: false });
+            card.addEventListener('pointerup', onUp);
             card.addEventListener('pointercancel', cleanup);
+
+            if (handle) {
+                handle.addEventListener('pointerdown', e => {
+                    if (e.pointerType !== 'touch') return;
+                    e.stopPropagation(); e.preventDefault();
+                    tracking = true;
+                    startX = e.clientX; startY = e.clientY;
+                    beginDrag(e.clientX, e.clientY); // dedicated hit-zone — no arm delay needed
+                });
+                handle.addEventListener('pointermove', onMove, { passive: false });
+                handle.addEventListener('pointerup', onUp);
+                handle.addEventListener('pointercancel', cleanup);
+            }
         }
 
         // ─── Instant drag-and-drop handle (Pro perk, 2026-07-18) ───
